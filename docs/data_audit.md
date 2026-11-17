@@ -1,7 +1,7 @@
 # Data Audit
 
-**Status:** NUMBAT 2025 audited and cleaned; historical files not yet audited  
-**Last Updated:** 17 November 2026
+**Status:** NUMBAT 2025 and LU entry/exit counts 2007–2017 audited and cleaned; performance data not yet audited  
+**Last Updated:** 18 November 2026
 
 ## 1. Purpose and method
 
@@ -97,9 +97,70 @@ No rows are removed. Tram stations and links are flagged `in_scope = False`; lin
 
 **Open item for Pilot 03.** A few Elizabeth line links show more than 1,500 passengers per train in the morning peak (maximum 1,787, Stratford → Whitechapel). That is above the plausible capacity of a train. The cause may be how trains are counted on links where branches merge. Passengers per train must be checked before it is used as a pressure indicator.
 
-## 6. Not yet audited
+## 6. Historical LU station entry/exit counts (2007–2017)
 
-- `multi-year-station-entry-and-exit-figures.xls` (2007–2017). Its sheets have inconsistent sizes (e.g. 2008 has 14,263 rows), it contains extra `workings` and `Sheet1` sheets, and some values are estimated (note "A").
-- `lu-performance-data.xlsx` and `tfl-tube-performance.xlsx`.
+Audited by `src/inspect_entry_exit.py` (report: `reports/audit_entry_exit_2007_2017.md`) and cleaned by `src/clean_entry_exit.py`. Both scripts read the file through `src/entry_exit_common.py`, so they handle it in exactly the same way.
 
-These will be audited before they are used in the combined dataset.
+### 6.1 Structure
+
+- One sheet per year (2007–2017). Each row is one LU station in one year: typical-day counts for Weekday, Saturday and Sunday, for entries and exits, plus an annual total in millions.
+- These are **counts** (measured), whereas NUMBAT values are **modelled** estimates. Each source has its own day types: here a single "Weekday"; NUMBAT has `MON`/`TWT`/`FRI`.
+- The rows include 268–273 stations. Overground, DLR and Elizabeth line stations are not covered.
+- Other sheets are not used:
+  - `Notes` (documentation only);
+  - `workings` (the publisher's intermediate calculations);
+  - `Sheet1`, a pasted table of station facts (opening dates, lines) that appears to be copied from a third-party web page and is not TfL count data.
+
+### 6.2 Findings
+
+- **Checks passed:** no blanks, no text in number columns, no negative values and no duplicate NLCs. For every station and year, the annual figure equals the documented weighting (253 × weekday + 52 × Saturday + 59 × Sunday, entries + exits). All 268 stations open in 2017 are found in NUMBAT 2025.
+- **Formatting issues:**
+  - Station names have trailing spaces in some years.
+  - The 2008 sheet has about 14,000 formatting-only rows below the table.
+  - The publisher's total row is labelled in some years, unlabelled in others, and missing in 2015.
+- **Publisher totals:** in 2013 and 2016 the total row does not match the sum of the station rows (differences up to 9,691).
+- **Note codes:**
+  - `A` (estimated from the previous year): 59 station-years.
+  - `N`/`Closed` (station closed): 4.
+  - `T`/`B` (Waterloo & City line effects).
+  - `C` and `D` appear in 2016–2017 but are **not explained** in the file.
+- **Zero counts on all days:** these are real closures, e.g. Shoreditch 2007, Blackfriars 2009–2011 (rebuilding), Edgware Road (Bakerloo) 2013, Tufnell Park 2015 and Lambeth North 2016. Some are not marked `N`.
+- **Coverage changes:**
+  - Seven former East London line stations appear only in 2007; the line closed in December 2007 and later reopened as part of the Overground.
+  - Wood Lane and Heathrow Terminal 5 appear from 2008.
+- **Borough:** only given in 2014–2017.
+
+### 6.3 Cleaning decisions
+
+| Issue | Decision |
+|---|---|
+| Header, formatting and total rows | Keep station rows only (rows with a numeric NLC). Use station rows rather than the publisher's totals, which are inconsistent in 2013 and 2016. |
+| Trailing spaces | Strip station names. |
+| Note codes | Keep the raw code (`note_raw`) and translate it into readable flags in `scope_note`. Undocumented codes become `undocumented_note_C` / `undocumented_note_D`. |
+| Estimated values (`A`) | Keep, flagged `estimated_from_previous_year`. Analyses of change over time should test sensitivity to excluding them. |
+| Zero counts | Keep. Flag `station_closed` (if noted) or `zero_all_day`. These zeros carry real information about closures. |
+| Stations not in NUMBAT 2025 | Keep, flagged `not_in_numbat_2025`. |
+| Borough | Fill 2007–2013 from the most recent year available for the same NLC (station boroughs do not change). |
+
+### 6.4 Camden Town: evidence of a station access restriction
+
+In every year from 2007 to 2017, Sunday **exits** at Camden Town are about 1.5–1.9 times Sunday **entries** (e.g. 2014: 33,767 exits vs 17,679 entries). On Saturdays the two are close.
+
+This is consistent with the station being exit-only on Sunday afternoons to prevent crowding. According to the London Underground Railway Society (Newsflash NF 22/19), it became fully open on Sundays from 6 January 2019. In NUMBAT 2025, Sunday entries and exits are similar (25,909 vs 27,773).
+
+This makes Camden Town a candidate case for H3/H4 (an access restriction associated with a redistribution of departures to other stations), alongside the 2025 pedestrianisation. The restriction dates still need confirmation from an official TfL source.
+
+## 7. Combined master table
+
+`src/build_master.py` combines the cleaned NUMBAT 2025 station table and the cleaned LU counts into `data/processed/station_demand_master.csv`: 469,878 rows covering 2007–2017 (counts) and 2025 (NUMBAT).
+
+Two columns must be used whenever rows from different sources are compared:
+- `measurement`: `modelled` or `counted`.
+- `temporal_resolution`: `15min` or `full_day`.
+
+NUMBAT 2025 and the LU counts differ in method, day-type definitions and station coverage. Differences between them are therefore not automatically real changes in demand.
+
+## 8. Not yet audited
+
+- `lu-performance-data.xlsx` and `tfl-tube-performance.xlsx` (line-level performance).
+- NUMBAT 2016–2024 (not yet downloaded; NUMBAT 2024 is needed for the Camden before/after comparison).

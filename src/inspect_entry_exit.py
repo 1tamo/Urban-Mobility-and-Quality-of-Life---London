@@ -1,0 +1,151 @@
+"""
+Data audit for the historical LU station entry/exit counts (2007-2017).
+
+Read-only: the raw file is never modified. Same checklist as
+src/inspect_data.py (structure, blanks, duplicates, types, impossible
+values, internal consistency, linkage), plus checks specific to this file
+(note codes, annual totals, station coverage across years).
+
+Usage (from the repository root, with the .venv activated):
+
+    python src/inspect_entry_exit.py
+
+Writes reports/audit_entry_exit_2007_2017.md
+"""
+
+from datetime import date
+
+import pandas as pd
+
+from entry_exit_common import (IGNORED_SHEETS, RAW_FILE, REPO_ROOT, VALUE_COLS,
+                               WEIGHTS, read_year, year_sheets)
+
+NUMBAT_2025 = REPO_ROOT / "data" / "raw" / "NBT25MON_Outputs.xlsx"
+REPORT = REPO_ROOT / "reports" / "audit_entry_exit_2007_2017.md"
+TOL = 0.001
+
+
+def markdown_table(df: pd.DataFrame) -> str:
+    """Render a DataFrame as a Markdown table (no extra packages needed)."""
+    def cell(x):
+        if x is None or (isinstance(x, float) and pd.isna(x)):
+            return "n/a"
+        if isinstance(x, float):
+            return f"{x:,.2f}"
+        return str(x)
+    head = "| " + " | ".join(df.columns) + " |"
+    sep = "|" + "---|" * len(df.columns)
+    body = ["| " + " | ".join(cell(x) for x in row) + " |" for row in df.itertuples(index=False)]
+    return "\n".join([head, sep, *body])
+
+
+def main() -> None:
+    if not RAW_FILE.exists():
+        raise FileNotFoundError(f"{RAW_FILE} not found (see docs/data_sources.md).")
+    print(f"Reading {RAW_FILE.name} ...")
+    sheets = year_sheets()
+    all_sheets = pd.ExcelFile(RAW_FILE).sheet_names
+    other = [s for s in all_sheets if s not in sheets.values()]
+
+    rows, years = [], {}
+    for year, sheet in sheets.items():
+        df, total = read_year(year, sheet)
+        years[year] = df
+        v = df[list(VALUE_COLS)].apply(pd.to_numeric, errors="coerce")
+        non_numeric = int(v.isna().sum().sum() - df[list(VALUE_COLS)].isna().sum().sum())
+
+        # Annual figure should equal weighted entries + exits (Notes sheet).
+        annual = sum(WEIGHTS[day] * (v[day] + v[f"{day}.1"]) for day in WEIGHTS) / 1e6
+        annual_diff = (annual - pd.to_numeric(df["million"], errors="coerce")).abs().max()
+
+        # Publisher's Total row should equal the column sums.
+        total_diff = None
+        if total is not None:
+            total_diff = max(abs(v[c].sum() - float(total[c])) for c in VALUE_COLS)
+
+        entries = v[["Weekday", "Saturday", "Sunday"]].sum().sum()
+        exits = v[["Weekday.1", "Saturday.1", "Sunday.1"]].sum().sum()
+        notes = df["Note"].replace("", pd.NA).dropna().value_counts().to_dict()
+        zero = df.loc[v.sum(axis=1) == 0, "Station"].tolist()
+
+        rows.append({
+            "Year": year,
+            "Stations": len(df),
+            "Borough column": "Borough" in df.columns,
+            "Duplicate NLC": int(df["nlc"].duplicated().sum()),
+            "Blank values": int(df[list(VALUE_COLS)].isna().sum().sum()),
+            "Non-numeric": non_numeric,
+            "Negative": int((v < 0).sum().sum()),
+            "Annual ≠ weighted sum": int((annual - pd.to_numeric(df["million"], errors="coerce")).abs().gt(TOL).sum()),
+            "Total row diff": total_diff,
+            "Exits − entries %": round((exits - entries) / entries * 100, 2),
+            "Notes": ", ".join(f"{k}: {n}" for k, n in notes.items()) or "none",
+            "Zero all day": ", ".join(zero) or "none",
+        })
+        print(f"  checked {year}: {len(df)} stations")
+
+    # Station coverage across years
+    nlc_sets = {y: set(d["nlc"]) for y, d in years.items()}
+    all_nlc = set().union(*nlc_sets.values())
+    names = {r.nlc: r.Station for d in years.values() for r in d[["nlc", "Station"]].itertuples()}
+    first, last = min(years), max(years)
+    only_some = sorted(n for n in all_nlc if any(n not in s for s in nlc_sets.values()))
+    coverage = []
+    for n in only_some:
+        present = [y for y in years if n in nlc_sets[y]]
+        coverage.append(f"{names[n]} (NLC {n}): {present[0]}–{present[-1]}")
+    multi_names = {n: sorted({str(s) for d in years.values() for s in d.loc[d.nlc == n, 'Station']})
+                   for n in all_nlc}
+    renamed = {n: v for n, v in multi_names.items() if len(v) > 1}
+
+    # Linkage to NUMBAT 2025 station NLCs
+    link_text = "NUMBAT 2025 file not found: linkage not checked."
+    if NUMBAT_2025.exists():
+        n25 = set(pd.read_excel(NUMBAT_2025, sheet_name="Station_Entries", header=2)["NLC"])
+        missing = sorted(all_nlc - n25)
+        link_text = (f"{len(all_nlc & n25)} of {len(all_nlc)} historical NLCs are found in NUMBAT 2025. "
+                     f"Not found: {', '.join(f'{names[n]} ({n})' for n in missing) or 'none'}.")
+
+    table = pd.DataFrame(rows)
+    lines = [
+        "# Audit: LU station entry/exit counts 2007–2017",
+        "",
+        f"_Generated by `src/inspect_entry_exit.py` on {date.today().isoformat()} from "
+        f"`{RAW_FILE.name}`. Raw data were read only, never modified._",
+        "",
+        "## Structure",
+        "",
+        f"- Year sheets: {first}–{last} ({len(years)} sheets). Other sheets: {', '.join(other)}.",
+        f"- Sheets not used: {', '.join(s for s in IGNORED_SHEETS if s in other)}.",
+        "- One row = one LU station in one year. Values are typical-day counts "
+        "(Weekday, Saturday, Sunday) for entries and exits, plus an annual total in millions.",
+        "- Header rows (title, copyright, weights) occupy rows 1–6; a publisher 'Total' row "
+        "follows the station rows.",
+        "",
+        "## Checks by year",
+        "",
+        markdown_table(table),
+        "",
+        "`Total row diff` is the largest difference between the publisher's total row and "
+        "the sum of the station rows (n/a = no total row in that sheet).",
+        "",
+        "## Coverage across years",
+        "",
+        f"- Distinct stations (NLC) across all years: {len(all_nlc)}.",
+        f"- Stations not present in every year: {len(only_some)}",
+        *[f"  - {c}" for c in coverage],
+        f"- NLCs with more than one station name: {renamed or 'none'}.",
+        "",
+        "## Linkage",
+        "",
+        f"- {link_text}",
+        "",
+    ]
+    REPORT.parent.mkdir(exist_ok=True)
+    REPORT.write_text("\n".join(lines), encoding="utf-8")
+    print(f"Report written to {REPORT.relative_to(REPO_ROOT)}\n")
+    print("\n".join(lines))
+
+
+if __name__ == "__main__":
+    main()
