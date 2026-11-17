@@ -65,15 +65,18 @@ Platform IDs in `Station_Boarders` / `Station_Alighters` are not unique on their
 | Issue | Decision | Reason |
 |---|---|---|
 | A | Drop the empty row and the `TOTAL` row from `Line_Boarders`. | They are not line observations. |
-| B | Exclude London Trams stations from the analysis tables, and record the exclusion. | Trams are out of NUMBAT 2025 scope; their zeros mean "not modelled", not "no passengers". |
-| C | Exclude tram links. Keep the 8 non-tram zero links but flag them as `no_service`. | Tram links are out of scope. For the others, zero reflects the timetable and is a valid value. |
+| B | Keep London Trams stations in the cleaned tables, flagged `in_scope = False` with reason `trams_not_modelled`. Exclude them from analyses by default. | Their zeros mean "not modelled", not "no passengers": they must not enter averages or rankings as real zeros. Keeping them, rather than deleting them, preserves the full station list. |
+| C | Keep all 79 links. Flag the 71 tram links `in_scope = False` (`trams_not_modelled`) and the 8 others `no_service`. | Tram links are out of scope. For the others, zero reflects the timetable and is a valid value. |
 | D | Drop the 13 exact duplicate rows. Keep the 15 same-ID rows unchanged for now and flag them. | `Station_Flows` is not used in the first analyses; revisit if it becomes relevant. |
 | E | No change. Join link attributes (e.g. distance) only where codes match, and report the unmatched links. | The links are valid 2025 links missing from an older reference file. |
 | Structure | Use `ID` + `Line` as the key for platform-level sheets. | Shared platforms. |
 
+**Why the zeros are not station closures.** A station with zero demand all day could indicate a closure in other data sources. In NUMBAT 2025 this is not possible: days affected by closures are excluded and a full scheduled service is assumed. All 39 zero-demand stations are tram stops, which NUMBAT 2025 does not model. Closures and disruptions should be studied with calendar-date data (e.g. TfL Network Demand station footfall), which is relevant to H3/H4.
+
 General rules for all cleaning:
 - Raw files are never modified.
 - Cleaning is done by a script and written to `data/processed/`.
+- Rows are flagged rather than deleted wherever possible.
 - Every removed or flagged row is counted in the cleaning output.
 
 ## 5. Not yet audited
