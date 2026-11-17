@@ -1,0 +1,15 @@
+# Local datasets
+data/raw/
+data/processed/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Environment variables
+.env
+.env.*
+
+# System files
+.DS_Store
