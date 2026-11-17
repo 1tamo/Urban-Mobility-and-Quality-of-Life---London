@@ -2,8 +2,8 @@
 
 **Project:** When Does Concentration Become Pressure? Urban Mobility and Quality of Life in London
 
-**Status:** Initial Proposal  
-**Version:** 0.1  
+**Status:** Initial Proposal (with candidate case)  
+**Version:** 0.2  
 **Draft Date:** 2 November 2026  
 **Initial Document Author:** 1tamo
 
@@ -66,6 +66,27 @@ Potential cases include:
 - New facility openings
 
 Final case selection will depend on the availability of comparable observations and relevant contextual information.
+
+### 4.1 Candidate Case: Camden High Street Pedestrianisation
+
+Identified by a team member (17 November 2026) and verified against public sources. This is a candidate case for H4 and, secondarily, H1. It is not yet a confirmed case.
+
+- **Intervention:** Camden Council closed the section of Camden High Street between Britannia Junction (next to Camden Town Underground station) and Jamestown Road / Hawley Crescent to motor traffic.
+- **Key dates:**
+  - Trial started on 3 May 2025.
+  - Public consultation ran from 13 July to 23 August 2026.
+  - The scheme was made permanent on 27 October 2026.
+- **Sources:**
+  - Camden Council, <https://news.camden.gov.uk/have-your-say-on-the-trial-pedestrianisation-of-camden-high-street/>
+  - Camden Council, <https://news.camden.gov.uk/camden-high-street-party-launches-pedestrianisation-of-iconic-road/>
+- **Council-reported trial outcomes (to be checked against the evaluation report):** footfall on the high street remained mostly the same, and roads around Camden High Street did not see higher traffic levels overall.
+- **Related case:** Oxford Street (Orchard Street to Great Portland Street) became traffic-free on 26 October 2026, after a weekend trial in October 2025. It is too recent for NUMBAT data and is kept as context.
+- **Proposed design:** compare Camden Town station demand in NUMBAT 2024 (autumn 2024, before the trial) and NUMBAT 2025 (autumn 2025, about five months into the trial). Use nearby stations (e.g. Chalk Farm, Mornington Crescent, Kentish Town, Camden Road) as comparison locations.
+- **Limitations:**
+  - There is one before and one after typical-day observation, so the comparison is descriptive, not causal.
+  - Station demand is not street footfall.
+  - Other changes between 2024 and 2025 (e.g. network-wide demand growth) must be accounted for, for instance by comparing against nearby stations.
+- **Unverified claim:** a team member's claim that Camden High Street footfall is comparable to Oxford Street's has not been verified. The council reports up to 40,000 pedestrians at busy times on Camden High Street; no comparable Oxford Street figure has been checked.
 
 ## 5. Proposed Data and Methodology
 
@@ -154,6 +175,7 @@ Substantive changes to the research scope, hypotheses or methodology will be rec
 |---|---|---|
 | 0.1 | 2026-11-02 | Initial drafted |
 | 0.1 (GitHub) | 2026-11-16 | Initial documented in the repository |
+| 0.2 | 2026-11-17 | Added candidate case: Camden High Street pedestrianisation (section 4.1) |
 
 ---
 

@@ -1,6 +1,6 @@
 # Data Audit
 
-**Status:** NUMBAT 2025 audited; historical files not yet audited  
+**Status:** NUMBAT 2025 audited and cleaned; historical files not yet audited  
 **Last Updated:** 17 November 2026
 
 ## 1. Purpose and method
@@ -79,7 +79,25 @@ General rules for all cleaning:
 - Rows are flagged rather than deleted wherever possible.
 - Every removed or flagged row is counted in the cleaning output.
 
-## 5. Not yet audited
+## 5. Cleaning implementation
+
+The decisions above are implemented in `src/clean_numbat.py`. The script writes three tables to `data/processed/` (local only, not uploaded) and a log to `reports/cleaning_log_numbat2025.md`.
+
+| Output | One row represents | Rows |
+|---|---|---|
+| `station_demand_long.csv` (master table) | station × day type × 15-min slot × measure (entries / exits) | 452,160 |
+| `link_demand_long.csv` | link × day type × 15-min slot (passengers, trains, passengers per train) | 582,720 |
+| `camden_town_detail.csv` | Camden Town × day type × 15-min slot (entries, exits, boarders / alighters by platform) | 480 |
+
+Validation built into the script:
+- For every station, link and day type, the reshaped 15-minute values sum back to the original daily `Total`.
+- Key columns have no duplicates.
+
+No rows are removed. Tram stations and links are flagged `in_scope = False`; links without trains in a day type are flagged `no_service`. `Line_Boarders` and `Station_Flows` are not used in these outputs.
+
+**Open item for Pilot 03.** A few Elizabeth line links show more than 1,500 passengers per train in the morning peak (maximum 1,787, Stratford → Whitechapel). That is above the plausible capacity of a train. The cause may be how trains are counted on links where branches merge. Passengers per train must be checked before it is used as a pressure indicator.
+
+## 6. Not yet audited
 
 - `multi-year-station-entry-and-exit-figures.xls` (2007–2017). Its sheets have inconsistent sizes (e.g. 2008 has 14,263 rows), it contains extra `workings` and `Sheet1` sheets, and some values are estimated (note "A").
 - `lu-performance-data.xlsx` and `tfl-tube-performance.xlsx`.
