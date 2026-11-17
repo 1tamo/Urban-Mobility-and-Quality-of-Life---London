@@ -144,7 +144,7 @@ Audited by `src/inspect_entry_exit.py` (report: `reports/audit_entry_exit_2007_2
 
 ### 6.4 Camden Town: evidence of a station access restriction
 
-In every year from 2007 to 2017, Sunday **exits** at Camden Town are about 1.5–1.9 times Sunday **entries** (e.g. 2014: 33,767 exits vs 17,679 entries). On Saturdays the two are close.
+In every year from 2007 to 2017, Sunday **exits** at Camden Town are about 1.5–2.1 times Sunday **entries** (e.g. 2014: 33,767 exits vs 17,679 entries). On Saturdays the two are close.
 
 This is consistent with the station being exit-only on Sunday afternoons to prevent crowding. According to the London Underground Railway Society (Newsflash NF 22/19), it became fully open on Sundays from 6 January 2019. In NUMBAT 2025, Sunday entries and exits are similar (25,909 vs 27,773).
 
@@ -164,3 +164,41 @@ NUMBAT 2025 and the LU counts differ in method, day-type definitions and station
 
 - `lu-performance-data.xlsx` and `tfl-tube-performance.xlsx` (line-level performance).
 - NUMBAT 2016–2024 (not yet downloaded; NUMBAT 2024 is needed for the Camden before/after comparison).
+
+## 9. Decision log
+
+Every decision that changed, flagged or excluded data, in the order it was applied, with its effect. This list summarises sections 4, 6.3 and 7; each decision is documented in full there.
+
+**General rules**
+- Raw files are never modified. All cleaning is done by scripts that write to `data/processed/`.
+- Problematic rows are flagged rather than deleted. **Rows deleted across all cleaning: 0.**
+
+**NUMBAT 2025** (`src/clean_numbat.py`; log: `reports/cleaning_log_numbat2025.md`)
+1. Used only the station entry/exit, platform boarders/alighters, link load and link frequency sheets. `Line_Boarders` (empty row + TOTAL row) and `Station_Flows` (13 exact duplicate rows, 15 same-ID rows) are not used in the outputs, so those issues did not need fixing.
+2. Reshaped the 96 15-minute columns into rows (wide → long) for all five day types. Checked that the reshaped values sum back to each original daily `Total`: all matched (maximum difference 0.0000).
+3. Kept 39 London Trams stations and 71 tram links, flagged `in_scope = False`, `trams_not_modelled`. NUMBAT 2025 does not model trams, so their zeros are not real zeros.
+4. Kept links with no trains in a day type, flagged `no_service`: 14 distinct links across the five day types (8 on weekdays, more at weekends).
+5. Added link distance from the 2024 Definitions file where link codes match. 10 links (2025 network changes) have no distance.
+6. Used `ID` + `Line` as the key for platform-level data, because shared platforms appear once per line.
+7. Computed `passengers_per_train` only where at least one train runs; otherwise blank. Values above 1,500 on some Elizabeth line links are kept but must be checked before use.
+
+**LU station entry/exit counts 2007–2017** (`src/clean_entry_exit.py`)
+8. Ignored the `Notes`, `workings` and `Sheet1` sheets (documentation, intermediate calculations and a third-party station table).
+9. Kept station rows only (numeric NLC). Dropped title, weight and formatting rows, including about 14,000 empty formatting rows in 2008, and the publisher's total rows. The total rows are inconsistent with the station rows in 2013 and 2016.
+10. Stripped trailing spaces from station names.
+11. Reshaped each year's six value columns into rows. Checked that every original value appears exactly once, with an identical sum.
+12. Kept the raw note code (`note_raw`) and translated it into flags. Station-years affected:
+    - `estimated_from_previous_year`: 59
+    - `station_closed`: 4
+    - `includes_waterloo_city_line`: 9
+    - `bank_excludes_waterloo_city_interchange`: 8
+    - `undocumented_note_C`: 3
+    - `undocumented_note_D`: 3
+13. Flagged 4 station-years with zero counts on all days that are not marked as closed (`zero_all_day`). Kept the zeros: they reflect real closures.
+14. Flagged 7 former East London line stations (2007 only) as `not_in_numbat_2025`.
+15. Filled `borough` for 2007–2013 from the most recent year available for the same NLC.
+
+**Master table** (`src/build_master.py`)
+16. Combined NUMBAT 2025 (452,160 rows) and the LU counts (17,718 rows) into `station_demand_master.csv` (469,878 rows). Checked that the row count equals the sum of the inputs and that keys are unique.
+17. Added `measurement` (`modelled` / `counted`) and `temporal_resolution` (`15min` / `full_day`) so that rows from different methods are never compared unknowingly.
+18. Filled missing station attributes across sources by NLC: borough for NUMBAT stations (from LU counts), and ASC code and fare zone for LU stations (from NUMBAT).
