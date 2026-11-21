@@ -11,14 +11,24 @@ We test this idea at **Stratford** in east London, where new rail links, Westfie
 
 | Part | Question | Hypothesis | Status |
 |---|---|---|---|
-| 1. Concentration | How did use of Stratford grow, and when? | H1 | In progress |
+| 1. Concentration | How did use of Stratford grow, and when? | H1 | First result |
 | 2. Everyday pressure | Is demand rising across Stratford and four nearby stations? | H1, H2 | In progress |
-| 3. Travel experience | What does peak-hour crowding feel like on board? | H2 | Preliminary result |
+| 3. Travel experience | What does peak-hour crowding feel like on board? | H2 | First result |
 | 4. Redistribution | On event days, does pressure move to smaller stations? | H3, H4 | Data being collected |
 
-**Preliminary result (Part 3):** On a typical 2025 weekday between 08:00 and 09:00, trains leaving Stratford for central London ran with all seats taken. Using a published London crowding valuation, a 10-minute ride felt like about 16 minutes on the Central line and about 24 minutes on the Elizabeth line, compared with about 10–11.5 minutes off-peak. These figures are being re-checked.
+### Part 1: Concentration
 
-_Figures will be added here as each part is completed._
+Typical-day use of Stratford Underground station more than doubled between 2007 and 2017. The largest jump came between 2010 and 2011, the year Westfield Stratford City opened.
+
+![Stratford Underground station entries and exits, 2007–2017](figures/part1_stratford_growth.png)
+
+### Part 3: Travel experience
+
+On a typical 2025 weekday between 08:00 and 09:00, trains leaving Stratford for central London run with all seats taken. Using a published London crowding valuation, a 10-minute ride feels like about 16 minutes on the Central line and about 24 minutes on the Elizabeth line, against 10–11.5 minutes off-peak. The Jubilee line starts at Stratford and has seats available on average.
+
+![How long a 10-minute ride leaving Stratford feels, 2025](figures/part3_train_crowding.png)
+
+_Parts 2 and 4 will be added once the multi-year NUMBAT data and the daily station footfall data are in place._
 
 ## Hypotheses
 
@@ -32,12 +42,10 @@ _Figures will be added here as each part is completed._
 | Folder / file | What it contains |
 |---|---|
 | [`docs/research_design.md`](docs/research_design.md) | Research question, case selection, methods and limitations |
-| [`docs/analysis_tables.md`](docs/analysis_tables.md) | The small tables behind each figure, column by column |
-| [`docs/data_sources.md`](docs/data_sources.md) | Where each dataset comes from, and its licence |
-| [`docs/data_audit.md`](docs/data_audit.md) | Data quality checks and cleaning decisions |
-| [`data/README.md`](data/README.md) | How to download the data and run the scripts |
-| `src/` | Data audit and cleaning scripts |
-| `reports/` | Audit reports and cleaning logs produced by the scripts |
+| [`docs/data.md`](docs/data.md) | Data sources and licences, how the data are processed, and what each table contains |
+| [`data/README.md`](data/README.md) | How to get the data and run the scripts |
+| `src/` | Four scripts, run in order: `1_clean_numbat.py`, `2_clean_entry_exit.py`, `3_make_tables.py`, `4_make_figures.py` |
+| `figures/` | Figures used in this README and the presentation |
 
 ## Responsible data analysis
 
