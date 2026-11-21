@@ -2,9 +2,9 @@
 
 **Project:** When Does Concentration Become Pressure? Urban Mobility and Quality of Life in London
 
-**Status:** Initial Proposal (with candidate case)  
-**Version:** 0.2  
-**Draft Date:** 2 November 2026  
+**Status:** Main case selected (Stratford); analysis in progress
+**Version:** 0.3
+**Draft Date:** 22 November 2026
 **Initial Document Author:** 1tamo
 
 ---
@@ -23,159 +23,136 @@ Increased activity may then support further business and service development, re
 
 ### Proposed Conceptual Framework
 
-**Improved access and opportunities → Concentration of people → Development attracts further demand → Rising capacity pressure → Worsening travel experience → Redistribution across times, routes or destinations**
+**Improved access and opportunities → Concentration of people → Rising capacity pressure → Worsening travel experience → Redistribution across times, routes or destinations**
 
-This framework is proposed as a hypothesis to be tested, rather than an assumed explanation.
-
-The analysis will also consider how employment, costs, information and accessibility needs may constrain people's ability to adjust their journeys.
+This framework is a hypothesis to be tested, not an assumed explanation.
 
 ## 3. Research Hypotheses
-
-The following hypotheses provide the initial basis for empirical investigation. Their feasibility will be assessed against available data.
 
 ### H1 — Concentration
 
 Improved transport accessibility or new facilities are associated with increased local flows.
 
-Where data permit, the relationship between flows and local development will also be examined.
-
 ### H2 — A Pressure Turning Point
 
-The relationship between flows and quality-of-life-related indicators may be nonlinear.
-
-Beyond a certain demand level, crowding, delays or travel burdens may increase more sharply.
+The relationship between flows and travel experience may be nonlinear. Once seats are full, each additional passenger adds standing density, and the perceived cost of travel rises more sharply.
 
 ### H3 — Redistribution
 
-Rising local pressure or access restrictions may shift some demand to alternative times, routes or destinations.
+When a hub is under pressure (for example on event days), some demand may shift to nearby alternative stations.
 
 ### H4 — Management Spillovers
 
-Measures such as pedestrianisation or station access restrictions may alleviate local pressure while increasing burdens in surrounding areas.
+Crowd-management measures at a hub (for example queuing, holding passengers or closing an entrance) may relieve that hub while increasing pressure at surrounding stations.
 
 ## 4. Research Scope
 
-The project will focus on London.
+### 4.1 Main Case: Stratford and the Queen Elizabeth Olympic Park area
 
-A small number of locations or events will be selected following an assessment of data availability and suitability, rather than committing to a particular station or geographic area at this stage.
+Selected on 22 November 2026 after team discussion. Stratford allows all four hypotheses to be examined in one place:
 
-Potential cases include:
+| Hypothesis | How it appears at Stratford |
+|---|---|
+| H1 | Long-term growth in station use alongside new transport links and facilities (2009–2016) |
+| H2 | Peak-hour trains leaving Stratford run with all seats taken and many passengers standing |
+| H3 | On event days at London Stadium, demand rises at smaller stations around the Park |
+| H4 | Event-day crowd management at Stratford station may push passengers towards those smaller stations |
 
-- Pedestrianisation
-- Transport-service disruptions
-- New facility openings
+**Study stations**
 
-Final case selection will depend on the availability of comparable observations and relevant contextual information.
+| Station | Main mode(s) | Notes |
+|---|---|---|
+| Stratford | LU (Central, Jubilee), Elizabeth line, LO, DLR, National Rail | Hub |
+| Stratford International | DLR, HS1 (Southeastern) | |
+| Stratford High Street | DLR | |
+| Pudding Mill Lane | DLR | Closest DLR station to London Stadium |
+| Hackney Wick | LO | |
 
-### 4.1 Candidate Case: Camden High Street Pedestrianisation
+Coverage of each station in each dataset must be confirmed before analysis (see section 8).
 
-Identified by a team member (17 November 2026) and verified against public sources. This is a candidate case for H4 and, secondarily, H1. It is not yet a confirmed case.
+**Timeline of access and opportunity changes** (to be verified against primary sources before use in figures)
 
-- **Intervention:** Camden Council closed the section of Camden High Street between Britannia Junction (next to Camden Town Underground station) and Jamestown Road / Hawley Crescent to motor traffic.
-- **Key dates:**
-  - Trial started on 3 May 2025.
-  - Public consultation ran from 13 July to 23 August 2026.
-  - The scheme was made permanent on 27 October 2026.
-- **Sources:**
-  - Camden Council, <https://news.camden.gov.uk/have-your-say-on-the-trial-pedestrianisation-of-camden-high-street/>
-  - Camden Council, <https://news.camden.gov.uk/camden-high-street-party-launches-pedestrianisation-of-iconic-road/>
-- **Council-reported trial outcomes (to be checked against the evaluation report):** footfall on the high street remained mostly the same, and roads around Camden High Street did not see higher traffic levels overall.
-- **Related case:** Oxford Street (Orchard Street to Great Portland Street) became traffic-free on 26 October 2026, after a weekend trial in October 2025. It is too recent for NUMBAT data and is kept as context.
-- **Proposed design:** compare Camden Town station demand in NUMBAT 2024 (autumn 2024, before the trial) and NUMBAT 2025 (autumn 2025, about five months into the trial). Use nearby stations (e.g. Chalk Farm, Mornington Crescent, Kentish Town, Camden Road) as comparison locations.
-- **Limitations:**
-  - There is one before and one after typical-day observation, so the comparison is descriptive, not causal.
-  - Station demand is not street footfall.
-  - Other changes between 2024 and 2025 (e.g. network-wide demand growth) must be accounted for, for instance by comparing against nearby stations.
-- **Unverified claim:** a team member's claim that Camden High Street footfall is comparable to Oxford Street's has not been verified. The council reports up to 40,000 pedestrians at busy times on Camden High Street; no comparable Oxford Street figure has been checked.
+| Year | Change | Type |
+|---|---|---|
+| 2009 | Domestic high-speed (HS1) services start calling at Stratford International | Access |
+| 2011 | Westfield Stratford City opens; Stratford City bus station opens | Opportunity / Access |
+| 2012 | London Olympic and Paralympic Games | Opportunity |
+| 2016 | London Stadium becomes West Ham United's home ground | Opportunity |
 
-## 5. Proposed Data and Methodology
+### 4.2 Case considered and set aside: Camden High Street pedestrianisation
 
-### 5.1 Data Requirements
+Camden High Street was proposed on 17 November 2026 as a case for H4. The trial began on 3 May 2025 and the scheme was made permanent on 27 October 2026 (Camden Council).
 
-The project intends to use publicly available, aggregated data, potentially including:
+It is no longer the main case, for these reasons:
 
-- Station entry and exit counts
-- Pedestrian flow counts
-- Records of transport changes or disruptions
-- Indicators of delays, crowding or infrastructure capacity
-- Indicators of local economic activity
+- The intervention affects street footfall, but our data measure station demand. Station demand is not street footfall.
+- Only one before (NUMBAT 2024) and one after (NUMBAT 2025) typical-day observation are available.
+- It does not connect to the Stratford story.
 
-Specific datasets have not yet been selected.
+If time allows, a short before-and-after comparison of Camden Town against nearby stations may be reported in an appendix. A result that does not support H4 would still be reported.
 
-Data availability, geographic coverage, temporal resolution and compatibility will be assessed before finalising the analytical approach.
+## 5. Data and Methods
 
-### 5.2 Analytical Approach
+The analysis is organised as a four-part story. Each part answers one question with one main figure.
 
-The proposed analysis includes:
+| Part | Question | Data | Main figure | Hypothesis |
+|---|---|---|---|---|
+| 1. Concentration | Why Stratford? How did use grow? | LU station entry/exit counts 2007–2017 (Stratford only) | Line chart by day type, annotated with the timeline in 4.1 | H1 |
+| 2. Everyday pressure | Is pressure rising across the five stations? | NUMBAT typical-day outputs 2018–2025 (2016–2017 if comparable) | Heatmap: station × year, one panel each for weekday, Saturday and Sunday | H1, H2 |
+| 3. Travel experience | What does that pressure feel like on board? | NUMBAT 2025 link loads and frequencies; TfL rolling stock data; crowding valuation (Yap, Wong & Cats, 2023) | Peak vs off-peak perceived journey time by line | H2 |
+| 4. Redistribution | On event days, where does the pressure go? | TfL Network Demand station footfall (daily); event calendar | Daily demand relative to each station's median, event days marked | H3, H4 |
 
-1. Collecting and assessing relevant mobility and contextual datasets.
-2. Examining temporal and spatial patterns in observed flows.
-3. Comparing selected locations or periods while accounting for factors such as weekdays, seasonality and major events.
-4. Investigating relationships between flow concentration and pressure-related indicators.
-5. Examining potential redistribution across times, routes or destinations.
-6. Assessing possible spillover effects associated with selected management measures.
+### 5.1 Pressure index (Part 4)
 
-Where suitable data exist, simple and interpretable statistical or predictive models may be used to estimate demand and explore possible pressure-related turning points.
+Physical station capacity is not published in a usable form, so pressure is measured relative to each station's own normal level:
 
-The choice of models and evaluation methods will be determined following the initial data assessment.
+> pressure index = daily entries and exits ÷ median daily entries and exits for the same station and the same day of the week, over the same year
+
+Working thresholds: an index of 1.5 or more is **elevated**, and 2.0 or more is **extreme**. These are analytical choices, not safety limits. Results will be checked with other thresholds.
+
+Both the relative increase (index) and the absolute increase (extra passengers) are reported. A hub can show a small relative increase while still handling the largest number of extra people.
+
+### 5.2 Perceived journey time (Part 3)
+
+> perceived time = in-vehicle time × (1 + 0.42 × standing passengers per m²)
+
+Standing density = (average passengers per train − seats) ÷ standing area, set to zero when seats are not full. The 0.42 coefficient comes from Yap, Wong & Cats (2023), estimated on Central and Victoria line data from 2022.
+
+### 5.3 Optional scenario
+
+If time allows, a simple, clearly labelled scenario: if one station's event-day excess demand were redistributed to the others in proportion to their normal share, which stations would pass the thresholds in 5.1? This is a what-if calculation, not a forecast.
 
 ## 6. Quality of Life and Responsible Data Analysis
 
-The project will consider how transport accessibility, crowding and travel burdens relate to quality of life, including how these burdens may be distributed across places and people.
-
-Where predictive modelling is undertaken, attention will be given to:
-
-- Data representativeness and potential measurement bias
-- Model interpretability and uncertainty
-- Differences in mobility constraints and opportunities
-- Potential implications for urban governance
-
-Several methodological distinctions are particularly important:
-
-**Observed flows are not direct measures of well-being.** Passenger or pedestrian counts alone cannot establish subjective travel experience, crowd density or safety risk.
-
-**Statistical thresholds are not necessarily physical capacity limits.** An observed turning point in the data should not be interpreted as a certified safe capacity.
-
-**Association does not establish causation.** The project will distinguish descriptive relationships, predictive findings and causal claims.
-
-Data sources and licensing conditions will be documented, and the analysis will prioritise aggregated data.
+- **Observed flows are not direct measures of well-being.** Passenger counts cannot establish subjective experience, crowd density at a given moment, or safety risk.
+- **NUMBAT is modelled, not observed.** It describes a typical day and averages across all trains in each period. Individual trains and areas near doors are more crowded.
+- **Statistical thresholds are not physical capacity limits.**
+- **Association does not establish causation.** The timeline in 4.1 shows coincidence in time, not cause.
+- **2020–2021 are pandemic years** and are marked in all trend figures.
+- Evidence on residents' wider quality of life is mostly qualitative or not specific to Stratford, and is used as supporting context only.
 
 ## 7. Expected Outcomes
 
-The project aims to evaluate how far available empirical evidence supports the proposed concentration–pressure–redistribution framework.
+The project aims to evaluate how far the evidence at Stratford supports the concentration–pressure–redistribution framework. An absence of clear patterns, or evidence against a hypothesis, will also be reported as a finding.
 
-In particular, the analysis will examine whether:
+## 8. Open Decisions
 
-- Accessibility and local opportunities are associated with increased flows.
-- Pressure-related indicators exhibit nonlinear relationships with demand.
-- Mobility patterns change in response to increasing pressure or restrictions.
-- Local management measures are accompanied by changes in surrounding areas.
+- Confirm that all five study stations appear in NUMBAT 2018–2025 and in the station footfall files.
+- Decide whether NUMBAT 2016–2017 can be compared with later years (day-type definitions changed).
+- Choose the fixed time period for the heatmap in Part 2 (e.g. AM peak or daily total).
+- Build and verify the event calendar (date, venue, event type, attendance).
+- Verify the Elizabeth line standing area, currently estimated from published standing capacity.
 
-An absence of clear thresholds or evidence against particular hypotheses will also be treated as a valid research finding.
+## 9. Revision History
 
-## 8. Open Research Decisions
-
-The following questions remain unresolved:
-
-- Which datasets can adequately measure local mobility flows?
-- Are suitable pressure-related indicators available at compatible temporal and spatial resolutions?
-- Which locations or events provide sufficient observations for comparison?
-- Can changes in flows be distinguished from seasonal variation and other external factors?
-- Which hypotheses can be tested reliably with the available data?
-
-These decisions will be revisited following the data feasibility assessment.
-
-## 9. Document Status and Revision History
-
-This document represents the initial research design and is subject to revision as the project develops.
-
-Substantive changes to the research scope, hypotheses or methodology will be recorded through Git version history.
+Substantive changes are also recorded in the Git history.
 
 | Version | Date | Description |
 |---|---|---|
-| 0.1 | 2026-11-02 | Initial drafted |
-| 0.1 (GitHub) | 2026-11-16 | Initial documented in the repository |
-| 0.2 | 2026-11-17 | Added candidate case: Camden High Street pedestrianisation (section 4.1) |
+| 0.1 | 2026-11-02 | Initial draft |
+| 0.1 (GitHub) | 2026-11-16 | Added to the repository |
+| 0.2 | 2026-11-17 | Added candidate case: Camden High Street pedestrianisation |
+| 0.3 | 2026-11-22 | Stratford selected as main case; Camden set aside; analysis organised as a four-part story; pressure index and perceived time defined |
 
 ---
 
