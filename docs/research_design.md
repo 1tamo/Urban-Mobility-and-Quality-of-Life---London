@@ -116,7 +116,7 @@ Both the relative increase (index) and the absolute increase (extra passengers) 
 
 > perceived time = in-vehicle time × (1 + 0.42 × standing passengers per m²)
 
-Standing density = (average passengers per train − seats) ÷ standing area, set to zero when seats are not full. The 0.42 coefficient comes from Yap, Wong & Cats (2023), estimated on Central and Victoria line data from 2022.
+Standing density = (average passengers per train − seats) ÷ standing area, set to zero when seats are not full. Passengers per train are calculated per hour, because 15-minute values jump with the timing of trains (see `docs/data.md`, section 3). The 0.42 coefficient comes from Yap, Wong & Cats (2023), estimated on Central and Victoria line data from 2022.
 
 ### 5.3 Optional scenario
 
