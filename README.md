@@ -1,54 +1,51 @@
 # When Does Concentration Become Pressure?
-### Urban Mobility and Quality of Life in London
+### Urban Mobility and Quality of Life in London: the case of Stratford
 
-## Overview
+## The question
 
-This project investigates how urban mobility, transport accessibility, and local development interact with infrastructure capacity and quality of life in London.
+New transport links and new destinations attract people. But when demand grows faster than stations and trains can handle, travel gets worse, and the pressure may move to nearby places.
 
-The study examines whether increasing activity creates pressure on transport infrastructure and public spaces, how people respond to such pressure, and whether urban management interventions alleviate local burdens or redistribute them to surrounding areas.
+We test this idea at **Stratford** in east London, where new rail links, Westfield, the 2012 Olympics and London Stadium have brought large numbers of people to one area.
 
-The project is guided by a proposed conceptual framework:
+## The story in four parts
 
-**Accessibility and Opportunities → Concentration → Capacity Pressure → Travel Experience → Redistribution**
+| Part | Question | Hypothesis | Status |
+|---|---|---|---|
+| 1. Concentration | How did use of Stratford grow, and when? | H1 | In progress |
+| 2. Everyday pressure | Is demand rising across Stratford and four nearby stations? | H1, H2 | In progress |
+| 3. Travel experience | What does peak-hour crowding feel like on board? | H2 | Preliminary result |
+| 4. Redistribution | On event days, does pressure move to smaller stations? | H3, H4 | Data being collected |
 
-This framework will be evaluated empirically rather than treated as an established explanation.
+**Preliminary result (Part 3):** On a typical 2025 weekday between 08:00 and 09:00, trains leaving Stratford for central London ran with all seats taken. Using a published London crowding valuation, a 10-minute ride felt like about 16 minutes on the Central line and about 24 minutes on the Elizabeth line, compared with about 10–11.5 minutes off-peak. These figures are being re-checked.
 
-## Research Questions
+_Figures will be added here as each part is completed._
 
-**Main Research Question**
+## Hypotheses
 
-When local activity increases beyond the capacity of infrastructure and public spaces, how are travel experiences and mobility patterns affected, and do urban management measures alleviate or redistribute pressure?
+- **H1 — Concentration:** Improved access or new facilities are associated with increased local flows.
+- **H2 — Pressure turning point:** Once seats are full, crowding makes travel feel sharply worse.
+- **H3 — Redistribution:** When the hub is under pressure, demand shifts to nearby stations.
+- **H4 — Management spillovers:** Crowd management at the hub may relieve it while increasing pressure elsewhere.
 
-**Research Hypotheses**
+## Repository guide
 
-- **H1 — Concentration:** Improved accessibility or new facilities are associated with increased local flows.
-- **H2 — Pressure Turning Point:** The relationship between flows and quality-of-life-related indicators may be nonlinear.
-- **H3 — Redistribution:** Rising pressure or access restrictions may shift demand across times, routes, or destinations.
-- **H4 — Management Spillovers:** Local interventions may alleviate pressure in one area while increasing burdens elsewhere.
+| Folder / file | What it contains |
+|---|---|
+| [`docs/research_design.md`](docs/research_design.md) | Research question, case selection, methods and limitations |
+| [`docs/analysis_tables.md`](docs/analysis_tables.md) | The small tables behind each figure, column by column |
+| [`docs/data_sources.md`](docs/data_sources.md) | Where each dataset comes from, and its licence |
+| [`docs/data_audit.md`](docs/data_audit.md) | Data quality checks and cleaning decisions |
+| [`data/README.md`](data/README.md) | How to download the data and run the scripts |
+| `src/` | Data audit and cleaning scripts |
+| `reports/` | Audit reports and cleaning logs produced by the scripts |
 
-## Research Approach
+## Responsible data analysis
 
-The project will explore publicly available mobility and transport-related datasets in London.
+- Passenger counts are not direct measures of well-being, crowd density or safety.
+- NUMBAT data are modelled typical days, averaged across all trains in each period.
+- Thresholds used in the analysis are analytical choices, not safety limits.
+- Patterns in time are associations, not proof of cause.
 
-Depending on data availability, the analysis may include exploratory data analysis, temporal and spatial comparisons, statistical modelling, and investigation of potential pressure-related turning points.
+## Data attribution
 
-Selected locations or events will be determined following a data feasibility assessment.
-
-## Documentation
-
-- [Research Design](docs/research_design.md)
-- [Data Sources](docs/data_sources.md)
-- [Data Management](data/README.md)
-- [Project Contributions](CONTRIBUTIONS.md)
-
-## Project Status
-
-**Current phase:** Research design and data feasibility assessment.
-
-Research hypotheses, case selection, and analytical methods remain subject to empirical evaluation and revision.
-
-## Responsible Data Analysis
-
-The project will consider data representativeness, uncertainty, interpretability, and the distribution of mobility-related burdens.
-
-Observed flow counts will not be treated as direct measures of well-being, crowd density, or safety risk.
+Powered by TfL Open Data. Contains public sector information licensed under the Open Government Licence v2.0.
