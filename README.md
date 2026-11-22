@@ -12,9 +12,9 @@ We test this idea at **Stratford** in east London, where new rail links, Westfie
 | Part | Question | Hypothesis | Status |
 |---|---|---|---|
 | 1. Concentration | How did use of Stratford grow, and when? | H1 | First result |
-| 2. Everyday pressure | Is demand rising across Stratford and four nearby stations? | H1, H2 | In progress |
+| 2. Everyday pressure | How has demand changed at Stratford and four nearby stations? | H1, H2 | First result |
 | 3. Travel experience | What does peak-hour crowding feel like on board? | H2 | First result |
-| 4. Redistribution | On event days, does pressure move to smaller stations? | H3, H4 | Data being collected |
+| 4. Redistribution | On event days, does pressure move to smaller stations? | H3, H4 | First result |
 
 ### Part 1: Concentration
 
@@ -22,13 +22,23 @@ Typical-day use of Stratford Underground station more than doubled between 2007 
 
 ![Stratford Underground station entries and exits, 2007–2017](figures/part1_stratford_growth.png)
 
+### Part 2: Everyday pressure
+
+On a typical day in 2025, Stratford is still below its 2019 level (about 0.7–0.9×), while Hackney Wick is well above (1.4–1.8×). Pudding Mill Lane jumps from 2022, but the cause still needs checking (see `docs/data.md`).
+
+![Typical-day demand at five stations compared with 2019](figures/part2_station_trends.png)
+
 ### Part 3: Travel experience
 
 On a typical 2025 weekday between 08:00 and 09:00, trains leaving Stratford for central London run with all seats taken. Using a published London crowding valuation, a 10-minute ride feels like about 16 minutes on the Central line and about 24 minutes on the Elizabeth line, against 10–11.5 minutes off-peak. The Jubilee line starts at Stratford and has seats available on average.
 
 ![How long a 10-minute ride leaving Stratford feels, 2025](figures/part3_train_crowding.png)
 
-_Parts 2 and 4 will be added once the multi-year NUMBAT data and the daily station footfall data are in place._
+### Part 4: Redistribution
+
+On the 15 days of 2025 when a nearby station was busiest compared with usual, the nearby station reached 1.8–5.6× its usual level, while Stratford rose to only 1.0–1.5×. The most extreme day was Sunday 18 May, the Hackney Half Marathon: Hackney Wick had 5.6× its usual Sunday use. In absolute numbers, though, Stratford still took more extra people that day (about 51,000 against 39,000 at Hackney Wick).
+
+![Stratford compared with the busiest nearby station on the 15 busiest days of 2025](figures/part4_busiest_days.png)
 
 ## Hypotheses
 
@@ -44,7 +54,8 @@ _Parts 2 and 4 will be added once the multi-year NUMBAT data and the daily stati
 | [`docs/research_design.md`](docs/research_design.md) | Research question, case selection, methods and limitations |
 | [`docs/data.md`](docs/data.md) | Data sources and licences, how the data are processed, and what each table contains |
 | [`data/README.md`](data/README.md) | How to get the data and run the scripts |
-| `src/` | Four scripts, run in order: `1_clean_numbat.py`, `2_clean_entry_exit.py`, `3_make_tables.py`, `4_make_figures.py` |
+| `src/` | Five scripts, run in order: `1_clean_numbat.py`, `2_clean_entry_exit.py`, `3_clean_footfall.py`, `4_make_tables.py`, `5_make_figures.py` |
+| `data/events_calendar.csv` | Events near the Park, compiled by the team |
 | `figures/` | Figures used in this README and the presentation |
 
 ## Responsible data analysis
