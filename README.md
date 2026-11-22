@@ -19,13 +19,13 @@ We first look at London as a whole, then test the idea at **Stratford** in east 
 
 ### Part 0: London overview
 
-**Growth, 2007–2017.** Of 238 Underground stations, Stratford had both the largest increase in typical-weekday entries + exits (+101,000) and the largest growth rate (×2.29). Across all Underground stations, weekday use grew by 22% over the same period.
+**London as a whole.** Across all Underground stations, typical-weekday entries + exits grew by 22% between 2007 and 2017. More recently, weekday entries + exits across the whole network fell to 25% of the 2019 level in 2020 and reached 91% by 2025. Change was uneven across London: in 2025, Zones 1 and 2 were furthest below 2019 (0.89 and 0.86), while Zones 5–6 were above it (1.10).
 
-![The ten Underground stations with the largest growth, 2007–2017](figures/part0_growth_2007_2017.png)
+![London-wide weekday demand by fare zone compared with 2019](figures/part0a_london_by_zone.png)
 
-**Change, 2018–2025.** Weekday entries + exits across London fell to 25% of the 2019 level in 2020 and reached 91% by 2025. In 2025, Zones 1 and 2 were furthest below 2019 (0.89 and 0.86), while Zones 5–6 were above it (1.10).
+**Where growth concentrated.** Growth was not spread evenly between stations either. Of 238 Underground stations, Stratford had both the largest increase in typical-weekday entries + exits between 2007 and 2017 (+101,000) and the largest growth rate (×2.29, against 22% for London). This is why we look at Stratford in detail in Parts 1–4.
 
-![London-wide weekday demand by fare zone compared with 2019](figures/part0_trend_by_zone.png)
+![The ten Underground stations with the largest growth, 2007–2017](figures/part0b_station_growth.png)
 
 ### Part 1: Concentration
 
