@@ -99,7 +99,7 @@ The analysis is organised as a four-part story. Each part answers one question w
 
 | Part | Question | Data | Main figure | Hypothesis |
 |---|---|---|---|---|
-| 0. London overview | Where in London has demand grown, and how has it changed? Why Stratford? | Entry/exit counts 2007–2017 (all Underground stations); NUMBAT 2018–2025 (all stations) | Top 10 growth stations; demand by fare zone vs 2019 | Context |
+| 0. London overview | Where in London has demand grown, and how has it changed? Why Stratford? | Entry/exit counts 2007–2017 (all Underground stations); NUMBAT 2018–2025 (all stations) | Demand by fare zone vs 2019; then the top 10 growth stations, leading to Stratford | Context |
 | 1. Concentration | Why Stratford? How did use grow? | LU station entry/exit counts 2007–2017 (Stratford only) | Line chart by day type, annotated with the timeline in 4.1 | H1 |
 | 2. Everyday pressure | Is pressure rising across the five stations? | NUMBAT typical-day outputs 2018–2025 | Heatmap: station × year, one panel each for weekday, Saturday and Sunday | H1, H2 |
 | 3. Travel experience | What does that pressure feel like on board? | NUMBAT 2025 link loads and frequencies; TfL rolling stock data; crowding valuation (Yap, Wong & Cats, 2023) | Peak vs off-peak perceived journey time by line | H2 |

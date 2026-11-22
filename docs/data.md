@@ -156,7 +156,16 @@ These are large and are only used as inputs to step 4.
 
 Small tables, one per part of the story. These are the tables to share with the team and to use for figures.
 
-**`part0_growth_2007_2017.csv`** — all Underground stations with at least 5,000 typical-weekday entries + exits in 2007 (238 stations)
+**`part0a_london_by_zone.csv`** — all stations, typical weekday, 2018–2025
+
+| Column | Meaning |
+|---|---|
+| `year` | 2018–2025 |
+| `zone_group` | `All London`, `Zone 1`, `Zone 2`, `Zones 3-4`, `Zones 5-6`, `Outside Zone 6`. Stations on a boundary (e.g. `2/3`) are counted in the lower zone. |
+| `total` | Typical-weekday entries + exits |
+| `vs_2019` | `total` ÷ the same group in 2019 |
+
+**`part0b_station_growth.csv`** — all Underground stations with at least 5,000 typical-weekday entries + exits in 2007 (238 stations)
 
 | Column | Meaning |
 |---|---|
@@ -165,15 +174,6 @@ Small tables, one per part of the story. These are the tables to share with the 
 | `total_2007` / `total_2017` | Typical-weekday entries + exits |
 | `increase` | `total_2017` − `total_2007` |
 | `ratio` | `total_2017` ÷ `total_2007` |
-
-**`part0_trend_by_zone.csv`** — all stations, typical weekday, 2018–2025
-
-| Column | Meaning |
-|---|---|
-| `year` | 2018–2025 |
-| `zone_group` | `All London`, `Zone 1`, `Zone 2`, `Zones 3-4`, `Zones 5-6`, `Outside Zone 6`. Stations on a boundary (e.g. `2/3`) are counted in the lower zone. |
-| `total` | Typical-weekday entries + exits |
-| `vs_2019` | `total` ÷ the same group in 2019 |
 
 **`part1_stratford_growth.csv`** — Stratford Underground station, typical day, 2007–2017
 
