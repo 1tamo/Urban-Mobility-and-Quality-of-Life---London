@@ -3,8 +3,8 @@
 Reads the part tables from step 4 and saves PNG figures to figures/
 (figures are small and are committed to Git):
 
-    part0_growth_2007_2017.png
-    part0_trend_by_zone.png
+    part0a_london_by_zone.png
+    part0b_station_growth.png
     part1_stratford_growth.png
     part2_station_trends.png
     part3_train_crowding.png
@@ -48,7 +48,7 @@ def style_axes(ax) -> None:
 
 def part0_growth() -> None:
     """The ten Underground stations with the largest growth, 2007-2017."""
-    df = pd.read_csv(DATA / "part0_growth_2007_2017.csv").head(10).iloc[::-1]
+    df = pd.read_csv(DATA / "part0b_station_growth.csv").head(10).iloc[::-1]
     fig, ax = plt.subplots(figsize=(9, 4.8), dpi=150)
     style_axes(ax)
     ax.yaxis.grid(False)
@@ -68,13 +68,13 @@ def part0_growth() -> None:
              "in 2007. ×: 2017 ÷ 2007. Source: TfL station entry/exit counts. " + SOURCE_TFL,
              fontsize=7, color=MUTED)
     fig.tight_layout(rect=(0, 0.04, 1, 1))
-    fig.savefig(FIGURES / "part0_growth_2007_2017.png")
+    fig.savefig(FIGURES / "part0b_station_growth.png")
     plt.close(fig)
 
 
 def part0_trend() -> None:
     """London-wide typical-weekday demand by fare zone, each year compared with 2019."""
-    df = pd.read_csv(DATA / "part0_trend_by_zone.csv")
+    df = pd.read_csv(DATA / "part0a_london_by_zone.csv")
     fig, ax = plt.subplots(figsize=(9, 5), dpi=150)
     style_axes(ax)
     series = [("All London", TEXT, 2.6), ("Zone 1", BLUE, 2), ("Zone 2", ORANGE, 2),
@@ -102,7 +102,7 @@ def part0_trend() -> None:
              "(stations on a zone boundary counted in the lower zone;\nthe few stations outside Zone 6 are in the London total only). Weekday = Mon–Thu up to 2021, "
              "Tue–Thu from 2022. Source: NUMBAT 2018–2025. " + SOURCE_TFL, fontsize=7, color=MUTED)
     fig.tight_layout(rect=(0, 0.06, 1, 1))
-    fig.savefig(FIGURES / "part0_trend_by_zone.png")
+    fig.savefig(FIGURES / "part0a_london_by_zone.png")
     plt.close(fig)
 
 
@@ -271,8 +271,8 @@ def part4() -> None:
 
 def main() -> None:
     FIGURES.mkdir(exist_ok=True)
-    part0_growth()
     part0_trend()
+    part0_growth()
     part1()
     part2()
     part3()

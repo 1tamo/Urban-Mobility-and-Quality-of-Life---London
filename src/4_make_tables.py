@@ -2,10 +2,10 @@
 
 Reads the cleaned tables from steps 1-3 and writes to data/processed/:
 
-    part0_growth_2007_2017.csv   all Underground stations: typical-weekday
-                                 entries + exits in 2007 and 2017
-    part0_trend_by_zone.csv      London-wide typical-weekday entries + exits by
+    part0a_london_by_zone.csv    London-wide typical-weekday entries + exits by
                                  year (2018-2025) and fare zone
+    part0b_station_growth.csv    all Underground stations: typical-weekday
+                                 entries + exits in 2007 and 2017
     part1_stratford_growth.csv   Stratford Underground station, typical-day
                                  entries and exits, 2007-2017
     part2_station_trends.csv     the five study stations, typical-day entries
@@ -208,8 +208,8 @@ def part4_busiest(daily: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     daily = part4_daily()
-    for name, build in [("part0_growth_2007_2017.csv", part0_growth),
-                        ("part0_trend_by_zone.csv", part0_trend),
+    for name, build in [("part0a_london_by_zone.csv", part0_trend),
+                        ("part0b_station_growth.csv", part0_growth),
                         ("part1_stratford_growth.csv", part1),
                         ("part2_station_trends.csv", part2),
                         ("part3_train_crowding.csv", part3),
