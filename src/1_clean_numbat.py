@@ -5,8 +5,8 @@ data/processed/:
 
     numbat_stations.csv  one row = one station, one year, one day type,
                          one 15-minute slot
-                         columns: year, day_type, nlc, station, time, time_band,
-                         entries, exits
+                         columns: year, day_type, nlc, station, fare_zone, time,
+                         time_band, entries, exits
     numbat_links.csv     one row = one link (stretch of track between two
                          neighbouring stations, one direction) on a typical
                          2025 weekday, one 15-minute slot
@@ -75,15 +75,18 @@ def to_long(wide: pd.DataFrame, id_cols: list[str], value: str) -> pd.DataFrame:
 
 def clean_stations(path: Path, year: int, day_type: str) -> pd.DataFrame:
     id_cols = ["NLC", "ASC", "Station"]
-    entries = to_long(read_sheet(path, "Station_Entries"), id_cols, "entries")
+    entries = to_long(read_sheet(path, "Station_Entries"), id_cols + ["Fare Zone"], "entries")
     exits = to_long(read_sheet(path, "Station_Exits"), id_cols, "exits")
+    # Fare zone is taken from the entries sheet only (it is sometimes typed differently in the two sheets).
     df = entries.merge(exits, on=id_cols + ["time"], validate="one_to_one")
     df = df[~df["ASC"].astype(str).str.endswith("t")]  # drop tram stops
     df["year"] = year
     df["day_type"] = day_type
     df["time_band"] = df["time"].map(time_band)
-    df = df.rename(columns={"NLC": "nlc", "Station": "station"})
-    return df[["year", "day_type", "nlc", "station", "time", "time_band", "entries", "exits"]]
+    df = df.rename(columns={"NLC": "nlc", "Station": "station", "Fare Zone": "fare_zone"})
+    df["fare_zone"] = df["fare_zone"].astype(str).str.strip()  # e.g. "1", "2/3"
+    return df[["year", "day_type", "nlc", "station", "fare_zone", "time", "time_band",
+               "entries", "exits"]]
 
 
 def clean_links(path: Path) -> pd.DataFrame:

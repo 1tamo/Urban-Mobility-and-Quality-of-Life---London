@@ -2,6 +2,10 @@
 
 Reads the cleaned tables from steps 1-3 and writes to data/processed/:
 
+    part0_growth_2007_2017.csv   all Underground stations: typical-weekday
+                                 entries + exits in 2007 and 2017
+    part0_trend_by_zone.csv      London-wide typical-weekday entries + exits by
+                                 year (2018-2025) and fare zone
     part1_stratford_growth.csv   Stratford Underground station, typical-day
                                  entries and exits, 2007-2017
     part2_station_trends.csv     the five study stations, typical-day entries
@@ -38,7 +42,10 @@ STUDY_STATIONS = {  # station code (NLC): name
 NEARBY = ["Stratford International", "Stratford High Street", "Pudding Mill Lane", "Hackney Wick"]
 TIME_BANDS = ["Early", "AM Peak", "Midday", "PM Peak", "Evening", "Late", "Whole day"]
 EVENT_YEAR = 2025
-BASE_YEAR = 2019  # last full year before the pandemic
+BASE_YEAR = 2019  # comparison year for Parts 0 and 2
+MIN_WEEKDAY_2007 = 5000   # Part 0: leave out very small stations
+ZONE_GROUPS = {"1": "Zone 1", "2": "Zone 2", "3": "Zones 3-4", "4": "Zones 3-4",
+               "5": "Zones 5-6", "6": "Zones 5-6"}
 
 # Seats and standing floor area per train (TfL rolling stock data sheets).
 # Elizabeth line: 1,043 standing places at about 4 people per m2 (estimate).
@@ -57,7 +64,49 @@ LINKS = [
     ("Jubilee", "West Ham", "Stratford", "arriving at Stratford"),
 ]
 LINE_NAMES = {"Central": "Central", "Jubilee": "Jubilee", "Elizabeth Line": "Elizabeth line"}
-CROWDING_WEIGHT = 0.42  # Yap, Wong & Cats (2023): per standing passenger per m2
+# Yap, Wong & Cats (2023): in-vehicle time is weighted by (1 + 0.42 x standing passengers per m2).
+CROWDING_WEIGHT = 0.42
+# Sensitivity checks: average of pre-2020 studies quoted in that paper, and the
+# approximate 95% interval of 0.42 (from its t-value of 2.21).
+OTHER_WEIGHTS = {"feels_like_pre_2020_studies": 0.22, "feels_like_low": 0.05, "feels_like_high": 0.79}
+
+
+def part0_growth() -> pd.DataFrame:
+    df = pd.read_csv(DATA / "entry_exit_2007_2017.csv")
+    df = df[(df["day_type"] == "weekday") & df["year"].isin([2007, 2017])].copy()
+    df["total"] = df["entries"] + df["exits"]
+    wide = df.pivot_table(index=["nlc", "station"], columns="year", values="total").dropna().reset_index()
+    wide = wide[wide[2007] >= MIN_WEEKDAY_2007].rename(columns={2007: "total_2007", 2017: "total_2017"})
+    wide["increase"] = wide["total_2017"] - wide["total_2007"]
+    wide["ratio"] = (wide["total_2017"] / wide["total_2007"]).round(2)
+    wide[["total_2007", "total_2017", "increase"]] = wide[["total_2007", "total_2017", "increase"]].astype(int)
+    wide = wide.sort_values("increase", ascending=False)
+    wide["rank_by_increase"] = range(1, len(wide) + 1)
+    return wide[["rank_by_increase", "station", "total_2007", "total_2017", "increase", "ratio"]]
+
+
+def zone_group(zone: str) -> str:
+    first = zone.split("/")[0]
+    if first in ZONE_GROUPS:
+        return ZONE_GROUPS[first]
+    return "Outside Zone 6" if first.isdigit() else "Other"
+
+
+def part0_trend() -> pd.DataFrame:
+    df = pd.read_csv(DATA / "numbat_stations.csv", usecols=["year", "day_type", "fare_zone",
+                                                            "entries", "exits"])
+    df = df[df["day_type"] == "weekday"].copy()
+    df["zone_group"] = df["fare_zone"].astype(str).map(zone_group)
+    by_zone = df.groupby(["year", "zone_group"], as_index=False)[["entries", "exits"]].sum()
+    london = df.groupby("year", as_index=False)[["entries", "exits"]].sum()
+    london["zone_group"] = "All London"
+    out = pd.concat([london, by_zone], ignore_index=True)
+    out = out[out["zone_group"] != "Other"]
+    out["total"] = out["entries"] + out["exits"]
+    base = out[out["year"] == BASE_YEAR].set_index("zone_group")["total"]
+    out["vs_2019"] = (out["total"] / out["zone_group"].map(base)).round(2)
+    out["total"] = out["total"].round().astype(int)
+    return out[["year", "zone_group", "total", "vs_2019"]].sort_values(["zone_group", "year"])
 
 
 def part1() -> pd.DataFrame:
@@ -107,15 +156,19 @@ def part3() -> pd.DataFrame:
     floor = out["line"].map(lambda l: TRAINS[l][1])
     out["standing_per_m2"] = ((out["passengers_per_train"] - out["seats"]).clip(lower=0) / floor)
     out["ten_minutes_feels_like"] = 10 * (1 + CROWDING_WEIGHT * out["standing_per_m2"])
+    for column, weight in OTHER_WEIGHTS.items():
+        out[column] = 10 * (1 + weight * out["standing_per_m2"])
 
     out["order"] = (out["hour"] - 5) % 24  # NUMBAT's day starts at 05:00
     out["hour"] = out["hour"].map(lambda h: f"{h:02d}:00-{(h + 1) % 24:02d}:00")
     out = out.sort_values(["line", "direction", "order"])
     out["passengers"] = out["passengers"].round().astype(int)
-    out = out.round({"passengers_per_train": 0, "standing_per_m2": 2, "ten_minutes_feels_like": 1})
+    out = out.round({"passengers_per_train": 0, "standing_per_m2": 2, "ten_minutes_feels_like": 1,
+                     **{column: 1 for column in OTHER_WEIGHTS}})
     out["passengers_per_train"] = out["passengers_per_train"].astype(int)
     return out[["line", "from", "to", "direction", "hour", "passengers", "trains",
-                "passengers_per_train", "seats", "standing_per_m2", "ten_minutes_feels_like"]]
+                "passengers_per_train", "seats", "standing_per_m2", "ten_minutes_feels_like",
+                *OTHER_WEIGHTS]]
 
 
 def part4_daily() -> pd.DataFrame:
@@ -155,7 +208,9 @@ def part4_busiest(daily: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     daily = part4_daily()
-    for name, build in [("part1_stratford_growth.csv", part1),
+    for name, build in [("part0_growth_2007_2017.csv", part0_growth),
+                        ("part0_trend_by_zone.csv", part0_trend),
+                        ("part1_stratford_growth.csv", part1),
                         ("part2_station_trends.csv", part2),
                         ("part3_train_crowding.csv", part3),
                         ("part4_daily_pressure.csv", lambda: daily),

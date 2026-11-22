@@ -3,6 +3,8 @@
 Reads the part tables from step 4 and saves PNG figures to figures/
 (figures are small and are committed to Git):
 
+    part0_growth_2007_2017.png
+    part0_trend_by_zone.png
     part1_stratford_growth.png
     part2_station_trends.png
     part3_train_crowding.png
@@ -42,6 +44,66 @@ def style_axes(ax) -> None:
     ax.tick_params(colors=MUTED, labelsize=9)
     ax.yaxis.grid(True, color=GRID, linewidth=0.8)
     ax.set_axisbelow(True)
+
+
+def part0_growth() -> None:
+    """The ten Underground stations with the largest growth, 2007-2017."""
+    df = pd.read_csv(DATA / "part0_growth_2007_2017.csv").head(10).iloc[::-1]
+    fig, ax = plt.subplots(figsize=(9, 4.8), dpi=150)
+    style_axes(ax)
+    ax.yaxis.grid(False)
+    ax.xaxis.grid(True, color=GRID, linewidth=0.8)
+    colours = [BLUE if s == "Stratford" else "#b8b6b0" for s in df["station"]]
+    ax.barh(df["station"], df["increase"] / 1000, color=colours, height=0.65)
+    for i, row in enumerate(df.itertuples()):
+        ax.text(row.increase / 1000 + 1.5, i, f"+{row.increase / 1000:.0f}k  (×{row.ratio:.2f})",
+                va="center", fontsize=8, color=TEXT)
+    ax.set_xlim(0, df["increase"].max() / 1000 * 1.25)
+    ax.tick_params(axis="y", labelsize=9, labelcolor=TEXT)
+    ax.set_xlabel("Increase in typical-weekday entries + exits, 2007 to 2017 (thousands)",
+                  color=MUTED, fontsize=9)
+    ax.set_title("Stratford grew more than any other Underground station in London, 2007–2017",
+                 loc="left", fontsize=12, color=TEXT, pad=12)
+    fig.text(0.01, 0.01, "Top 10 of 238 Underground stations with at least 5,000 weekday entries + exits "
+             "in 2007. ×: 2017 ÷ 2007. Source: TfL station entry/exit counts. " + SOURCE_TFL,
+             fontsize=7, color=MUTED)
+    fig.tight_layout(rect=(0, 0.04, 1, 1))
+    fig.savefig(FIGURES / "part0_growth_2007_2017.png")
+    plt.close(fig)
+
+
+def part0_trend() -> None:
+    """London-wide typical-weekday demand by fare zone, each year compared with 2019."""
+    df = pd.read_csv(DATA / "part0_trend_by_zone.csv")
+    fig, ax = plt.subplots(figsize=(9, 5), dpi=150)
+    style_axes(ax)
+    series = [("All London", TEXT, 2.6), ("Zone 1", BLUE, 2), ("Zone 2", ORANGE, 2),
+              ("Zones 3-4", AQUA, 2), ("Zones 5-6", "#8a5cc2", 2)]
+    ends = []
+    for name, colour, width in series:
+        d = df[df["zone_group"] == name].sort_values("year")
+        ax.plot(d["year"], d["vs_2019"], color=colour, linewidth=width, marker="o", markersize=4)
+        ends.append([d["vs_2019"].iloc[-1], name])
+    # Spread the end labels so they do not overlap (at least 0.045 apart).
+    ends.sort(reverse=True)
+    label_y = [ends[0][0]]
+    for value, _ in ends[1:]:
+        label_y.append(min(value, label_y[-1] - 0.045))
+    for (value, name), y in zip(ends, label_y):
+        ax.text(2025.15, y, f"{name}  {value:.2f}", va="center", fontsize=8, color=TEXT)
+    ax.axhline(1, color=MUTED, linewidth=0.8, linestyle=(0, (3, 3)), zorder=0)
+    ax.set_xlim(2017.6, 2026.4)
+    ax.set_ylim(0, 1.25)
+    ax.set_xticks(range(2018, 2026))
+    ax.set_ylabel("Typical-weekday entries + exits ÷ 2019 level", color=MUTED, fontsize=9)
+    ax.set_title("By 2025, London-wide weekday demand was 91% of 2019: lowest in Zones 1–2, highest in outer zones",
+                 loc="left", fontsize=12, color=TEXT, pad=12)
+    fig.text(0.01, 0.01, "All Underground, Overground, DLR and Elizabeth line stations, grouped by fare zone "
+             "(stations on a zone boundary counted in the lower zone;\nthe few stations outside Zone 6 are in the London total only). Weekday = Mon–Thu up to 2021, "
+             "Tue–Thu from 2022. Source: NUMBAT 2018–2025. " + SOURCE_TFL, fontsize=7, color=MUTED)
+    fig.tight_layout(rect=(0, 0.06, 1, 1))
+    fig.savefig(FIGURES / "part0_trend_by_zone.png")
+    plt.close(fig)
 
 
 def part1() -> None:
@@ -151,11 +213,11 @@ def part2() -> None:
         ax.tick_params(length=0)
         for side in ax.spines.values():
             side.set_visible(False)
-    fig.suptitle("Since the pandemic, Stratford has stayed below its 2019 level; Hackney Wick and Pudding Mill Lane are well above theirs",
+    fig.suptitle("In 2022–2025, Stratford stayed below its 2019 level; Hackney Wick and Pudding Mill Lane were well above theirs",
                  x=0.01, ha="left", fontsize=12, color=TEXT)
     fig.text(0.01, 0.01,
              "Each cell: whole-day entries + exits on a typical day ÷ the same station in 2019 (1.0 = same as 2019; "
-             "red = busier, blue = quieter; colours capped at 2.0). 2020–21: pandemic.\n"
+             "red = busier, blue = quieter; colours capped at 2.0).\n"
              "Weekday = Mon–Thu up to 2021, Tue–Thu from 2022. Stratford's 2025 Saturday total equals 2024's, "
              "suggesting TfL reused the count. Source: NUMBAT 2018–2025. " + SOURCE_TFL,
              fontsize=7, color=MUTED)
@@ -209,6 +271,8 @@ def part4() -> None:
 
 def main() -> None:
     FIGURES.mkdir(exist_ok=True)
+    part0_growth()
+    part0_trend()
     part1()
     part2()
     part3()
