@@ -6,8 +6,8 @@ This page explains which data we use, where they come from, how they are process
 
 | Dataset | What it tells us | Used in |
 |---|---|---|
-| Underground station entry/exit counts, 2007–2017 | How many people pass through each Underground station's gates on a typical weekday, Saturday and Sunday, each year | Part 1 |
-| NUMBAT 2018–2025 | TfL's model of a typical day each year: people entering and leaving every station in 15-minute steps; for 2025 also passengers and trains on every stretch of track | Parts 2 and 3 |
+| Underground station entry/exit counts, 2007–2017 | How many people pass through each Underground station's gates on a typical weekday, Saturday and Sunday, each year | Parts 0 and 1 |
+| NUMBAT 2018–2025 | TfL's model of a typical day each year: people entering and leaving every station in 15-minute steps; for 2025 also passengers and trains on every stretch of track | Parts 0, 2 and 3 |
 | TfL station footfall | Entries and exits per station on every real date, including event days | Part 4 |
 
 ### What each dataset cannot show
@@ -74,8 +74,8 @@ python src/5_make_figures.py
 | 1 | `1_clean_numbat.py` | NUMBAT 2018–2025 files | `numbat_stations.csv`, `numbat_links.csv` |
 | 2 | `2_clean_entry_exit.py` | 2007–2017 entry/exit file | `entry_exit_2007_2017.csv` |
 | 3 | `3_clean_footfall.py` | station footfall files | `footfall_daily.csv` |
-| 4 | `4_make_tables.py` | the four files above | one table per part (`part1_…` to `part4_…`) |
-| 5 | `5_make_figures.py` | the part tables | four figures in `figures/` |
+| 4 | `4_make_tables.py` | the four files above | one table per part (`part0_…` to `part4_…`) |
+| 5 | `5_make_figures.py` | the part tables | six figures in `figures/` |
 
 All tables are written to `data/processed/`, which is not in the repository. Raw files are never changed.
 
@@ -117,6 +117,7 @@ These are large and are only used as inputs to step 4.
 | `day_type` | `weekday`, `saturday`, `sunday` |
 | `nlc` | TfL station number (e.g. Stratford = 719). Use it to match stations, because names vary between files. |
 | `station` | Station name |
+| `fare_zone` | Fare zone as written by TfL, e.g. `1`, `2/3` (on a boundary) |
 | `time` | Start of the 15-minute slot, e.g. `08:15`. NUMBAT's day runs from 05:00 to 04:59. |
 | `time_band` | `Early` 05–07, `AM Peak` 07–10, `Midday` 10–16, `PM Peak` 16–19, `Evening` 19–22, `Late` 22–05 |
 | `entries` / `exits` | People entering / leaving the station in that slot (modelled) |
@@ -155,6 +156,25 @@ These are large and are only used as inputs to step 4.
 
 Small tables, one per part of the story. These are the tables to share with the team and to use for figures.
 
+**`part0_growth_2007_2017.csv`** — all Underground stations with at least 5,000 typical-weekday entries + exits in 2007 (238 stations)
+
+| Column | Meaning |
+|---|---|
+| `rank_by_increase` | 1 = largest increase |
+| `station` | Station name |
+| `total_2007` / `total_2017` | Typical-weekday entries + exits |
+| `increase` | `total_2017` − `total_2007` |
+| `ratio` | `total_2017` ÷ `total_2007` |
+
+**`part0_trend_by_zone.csv`** — all stations, typical weekday, 2018–2025
+
+| Column | Meaning |
+|---|---|
+| `year` | 2018–2025 |
+| `zone_group` | `All London`, `Zone 1`, `Zone 2`, `Zones 3-4`, `Zones 5-6`, `Outside Zone 6`. Stations on a boundary (e.g. `2/3`) are counted in the lower zone. |
+| `total` | Typical-weekday entries + exits |
+| `vs_2019` | `total` ÷ the same group in 2019 |
+
 **`part1_stratford_growth.csv`** — Stratford Underground station, typical day, 2007–2017
 
 | Column | Meaning |
@@ -184,7 +204,9 @@ Small tables, one per part of the story. These are the tables to share with the 
 | `passengers_per_train` | Average people on each train |
 | `seats` | Seats per train |
 | `standing_per_m2` | People standing per m² of floor; 0 means everyone can sit |
-| `ten_minutes_feels_like` | How long a 10-minute ride feels at that crowding: 10 × (1 + 0.42 × `standing_per_m2`), from Yap, Wong & Cats (2023). Not extra clock time. |
+| `ten_minutes_feels_like` | How long a 10-minute ride feels at that crowding: 10 × (1 + 0.42 × `standing_per_m2`), from Yap, Wong & Cats (2023; see section 5). Not extra clock time. |
+| `feels_like_pre_2020_studies` | The same with 0.22, the average of pre-2020 studies quoted in that paper |
+| `feels_like_low` / `feels_like_high` | The same with 0.05 / 0.79, the approximate 95% interval of 0.42 |
 
 **`part4_daily_pressure.csv`** — the five study stations on every day of 2025
 
@@ -207,7 +229,14 @@ Small tables, one per part of the story. These are the tables to share with the 
 | `stratford_index` / `stratford_extra` | Stratford's pressure index / extra passengers on the same day |
 | `<station>_index` | Pressure index of each nearby station that day (blank if no data) |
 
-## 5. Attribution for anything we publish
+## 5. Crowding valuation used in Part 3
+
+- **Source:** Yap, M., Wong, H. & Cats, O. (2023). Public transport crowding valuation in a post-pandemic era. *Transportation*, 52, 287–306 (2025 issue). <https://doi.org/10.1007/s11116-023-10420-1> (open access)
+- **What it estimates:** how much worse a minute on a crowded train feels, from 20,970 observed route choices on the Central and Victoria lines, 13–17 June 2022, using Oyster/contactless and train load-weigh data.
+- **Result used:** in-vehicle time × (1 + 0.42 × standing passengers per m²), counted from when the train is fully seated (t = 2.21).
+- **Limits:** we cannot re-estimate it, because the individual journey and train-weight data are not public. Observed densities in the study did not exceed 3 per m². Part 3 therefore also reports results with 0.22 and with 0.05–0.79 (section 4).
+
+## 6. Attribution for anything we publish
 
 - Powered by TfL Open Data.
 - Contains public sector information licensed under the Open Government Licence v2.0.

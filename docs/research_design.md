@@ -37,6 +37,8 @@ Improved transport accessibility or new facilities are associated with increased
 
 The relationship between flows and travel experience may be nonlinear. Once seats are full, each additional passenger adds standing density, and the perceived cost of travel rises more sharply.
 
+How we treat H2: we do not test the turning point ourselves. Yap, Wong & Cats (2023) found, using observed route choices on the London Underground, that crowding costs start once seats are full and then rise roughly linearly with standing density. Our contribution is to show where Stratford stands relative to that point: in the morning peak, Central line and Elizabeth line trains leaving Stratford are past it; off-peak trains and the Jubilee line are not. Part 3's figure applies the published formula, so it illustrates the turning point rather than proving it.
+
 ### H3 — Redistribution
 
 When a hub is under pressure (for example on event days), some demand may shift to nearby alternative stations.
@@ -97,6 +99,7 @@ The analysis is organised as a four-part story. Each part answers one question w
 
 | Part | Question | Data | Main figure | Hypothesis |
 |---|---|---|---|---|
+| 0. London overview | Where in London has demand grown, and how has it changed? Why Stratford? | Entry/exit counts 2007–2017 (all Underground stations); NUMBAT 2018–2025 (all stations) | Top 10 growth stations; demand by fare zone vs 2019 | Context |
 | 1. Concentration | Why Stratford? How did use grow? | LU station entry/exit counts 2007–2017 (Stratford only) | Line chart by day type, annotated with the timeline in 4.1 | H1 |
 | 2. Everyday pressure | Is pressure rising across the five stations? | NUMBAT typical-day outputs 2018–2025 | Heatmap: station × year, one panel each for weekday, Saturday and Sunday | H1, H2 |
 | 3. Travel experience | What does that pressure feel like on board? | NUMBAT 2025 link loads and frequencies; TfL rolling stock data; crowding valuation (Yap, Wong & Cats, 2023) | Peak vs off-peak perceived journey time by line | H2 |
@@ -116,7 +119,7 @@ Both the relative increase (index) and the absolute increase (extra passengers) 
 
 > perceived time = in-vehicle time × (1 + 0.42 × standing passengers per m²)
 
-Standing density = (average passengers per train − seats) ÷ standing area, set to zero when seats are not full. Passengers per train are calculated per hour, because 15-minute values jump with the timing of trains (see `docs/data.md`, section 3). The 0.42 coefficient comes from Yap, Wong & Cats (2023), estimated on Central and Victoria line data from 2022.
+Standing density = (average passengers per train − seats) ÷ standing area, set to zero when seats are not full. Passengers per train are calculated per hour, because 15-minute values jump with the timing of trains (see `docs/data.md`, section 3). The 0.42 coefficient comes from Yap, Wong & Cats (2023), estimated from 20,970 observed route choices on the Central and Victoria lines in June 2022 (t = 2.21). Observed standing densities in that study did not exceed 3 per m², so the Elizabeth line value (3.24) is a slight extrapolation. As a sensitivity check, Part 3 also reports results with 0.22 (the average of pre-2020 studies quoted in the same paper) and with the approximate 95% interval of 0.42 (0.05–0.79).
 
 ### 5.3 Optional scenario
 
@@ -128,7 +131,7 @@ If time allows, a simple, clearly labelled scenario: if one station's event-day 
 - **NUMBAT is modelled, not observed.** It describes a typical day and averages across all trains in each period. Individual trains and areas near doors are more crowded.
 - **Statistical thresholds are not physical capacity limits.**
 - **Association does not establish causation.** The timeline in 4.1 shows coincidence in time, not cause.
-- **2020–2021 are pandemic years** and are marked in all trend figures.
+- **2020 and 2021 show much lower demand than other years**; trends are compared with 2019.
 - Evidence on residents' wider quality of life is mostly qualitative or not specific to Stratford, and is used as supporting context only.
 
 ## 7. Expected Outcomes
@@ -140,7 +143,7 @@ The project aims to evaluate how far the evidence at Stratford supports the conc
 Done (22 November 2026):
 - All five study stations appear in NUMBAT 2018–2025 and in the station footfall files.
 - The Part 2 heatmap uses whole-day totals, compared with 2019. Tables by time band are also available.
-- NUMBAT 2016–2017 are not used: 2018–2025 already cover the period before and after the pandemic.
+- NUMBAT 2016–2017 are not used: 2018–2025 already cover the years before and after 2020–2021.
 
 Still open:
 - Build and verify the event calendar (date, venue, event type, attendance), so the busiest days in Part 4 can be matched to events.
