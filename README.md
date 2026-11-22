@@ -36,7 +36,7 @@ On a typical 2025 weekday between 08:00 and 09:00, trains leaving Stratford for 
 
 ### Part 4: Redistribution
 
-On the 15 days of 2025 when a nearby station was busiest compared with usual, the nearby station reached 1.8–5.6× its usual level, while Stratford rose to only 1.0–1.5×. The most extreme day was Sunday 18 May, the Hackney Half Marathon: Hackney Wick had 5.6× its usual Sunday use. In absolute numbers, though, Stratford still took more extra people that day (about 51,000 against 39,000 at Hackney Wick).
+On the 15 days of 2025 when a nearby station was busiest compared with usual, the nearby station reached 1.8–5.6× its usual level, while Stratford rose to only 1.0–1.5×. The most extreme day was Sunday 18 May, the day of the Hackney Half Marathon: Hackney Wick had 5.6× its usual Sunday use. In absolute numbers, though, Stratford still took more extra people that day (about 51,000 against 39,000 at Hackney Wick).
 
 ![Stratford compared with the busiest nearby station on the 15 busiest days of 2025](figures/part4_busiest_days.png)
 
