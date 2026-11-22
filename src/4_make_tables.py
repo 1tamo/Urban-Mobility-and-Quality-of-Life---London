@@ -1,18 +1,23 @@
-"""Step 3: build one small table per part of the story.
+"""Step 4: build one small table per part of the story.
 
-Reads the cleaned tables from steps 1 and 2 and writes to data/processed/:
+Reads the cleaned tables from steps 1-3 and writes to data/processed/:
 
     part1_stratford_growth.csv   Stratford Underground station, typical-day
                                  entries and exits, 2007-2017
-    part2_station_demand.csv     the five study stations, typical-day entries
-                                 and exits by time band (currently 2025 only)
+    part2_station_trends.csv     the five study stations, typical-day entries
+                                 and exits by year (2018-2025) and time band
     part3_train_crowding.csv     crowding on trains next to Stratford, by hour,
-                                 typical 2025 Tuesday-Thursday
+                                 typical 2025 weekday
+    part4_daily_pressure.csv     the five study stations on every day of 2025,
+                                 compared with their usual level
+    part4_busiest_days.csv       the 15 days of 2025 when a nearby station was
+                                 busiest compared with usual, and Stratford on
+                                 the same days
 
 Columns are explained in docs/data.md.
 
 Run from the repository root:
-    python src/3_make_tables.py
+    python src/4_make_tables.py
 """
 
 from pathlib import Path
@@ -30,7 +35,10 @@ STUDY_STATIONS = {  # station code (NLC): name
     859: "Pudding Mill Lane",
     6978: "Hackney Wick",
 }
+NEARBY = ["Stratford International", "Stratford High Street", "Pudding Mill Lane", "Hackney Wick"]
 TIME_BANDS = ["Early", "AM Peak", "Midday", "PM Peak", "Evening", "Late", "Whole day"]
+EVENT_YEAR = 2025
+BASE_YEAR = 2019  # last full year before the pandemic
 
 # Seats and standing floor area per train (TfL rolling stock data sheets).
 # Elizabeth line: 1,043 standing places at about 4 people per m2 (estimate).
@@ -61,23 +69,27 @@ def part1() -> pd.DataFrame:
 
 def part2() -> pd.DataFrame:
     df = pd.read_csv(DATA / "numbat_stations.csv")
-    df = df[df["nlc"].isin(STUDY_STATIONS) & df["day_type"].isin(["tue_thu", "saturday", "sunday"])]
-    by_band = df.groupby(["day_type", "nlc", "time_band"], as_index=False)[["entries", "exits"]].sum()
-    whole_day = df.groupby(["day_type", "nlc"], as_index=False)[["entries", "exits"]].sum()
+    df = df[df["nlc"].isin(STUDY_STATIONS)]
+    keys = ["year", "day_type", "nlc"]
+    by_band = df.groupby(keys + ["time_band"], as_index=False)[["entries", "exits"]].sum()
+    whole_day = df.groupby(keys, as_index=False)[["entries", "exits"]].sum()
     whole_day["time_band"] = "Whole day"
     out = pd.concat([by_band, whole_day], ignore_index=True)
-    out["year"] = 2025
     out["station"] = out["nlc"].map(STUDY_STATIONS)
     out["total"] = out["entries"] + out["exits"]
+    # Compare each year with the same station, day type and time band in 2019.
+    base = out[out["year"] == BASE_YEAR].set_index(["day_type", "nlc", "time_band"])["total"]
+    out["vs_2019"] = out["total"] / out.set_index(["day_type", "nlc", "time_band"]).index.map(base)
     out[["entries", "exits", "total"]] = out[["entries", "exits", "total"]].round().astype(int)
+    out["vs_2019"] = out["vs_2019"].round(2)
     out["time_band"] = pd.Categorical(out["time_band"], TIME_BANDS, ordered=True)
-    out = out.sort_values(["day_type", "station", "time_band"])
-    return out[["year", "day_type", "station", "time_band", "entries", "exits", "total"]]
+    out = out.sort_values(["day_type", "station", "time_band", "year"])
+    return out[["year", "day_type", "station", "time_band", "entries", "exits", "total", "vs_2019"]]
 
 
 def part3() -> pd.DataFrame:
     df = pd.read_csv(DATA / "numbat_links.csv")
-    df = df[df["day_type"] == "tue_thu"].copy()
+    df = df.copy()
     df["line"] = df["line"].map(LINE_NAMES)
     df = df.rename(columns={"from_station": "from", "to_station": "to"}).drop(columns="direction")
     wanted = pd.DataFrame(LINKS, columns=["line", "from", "to", "direction"])
@@ -106,10 +118,48 @@ def part3() -> pd.DataFrame:
                 "passengers_per_train", "seats", "standing_per_m2", "ten_minutes_feels_like"]]
 
 
+def part4_daily() -> pd.DataFrame:
+    df = pd.read_csv(DATA / "footfall_daily.csv", parse_dates=["date"])
+    df = df[df["station"].isin(STUDY_STATIONS.values()) & (df["date"].dt.year == EVENT_YEAR)].copy()
+    df["total"] = df["entries"] + df["exits"]
+    # A day with no taps at all means the station was closed or data are missing,
+    # not that nobody travelled: leave it out of the comparison.
+    df = df[df["total"] > 0]
+    # "Usual" = the station's median on the same day of the week over the year.
+    df["usual"] = df.groupby(["station", "day_of_week"])["total"].transform("median")
+    df["pressure_index"] = (df["total"] / df["usual"]).round(2)
+    df["extra_passengers"] = (df["total"] - df["usual"]).round().astype(int)
+    df["level"] = pd.cut(df["pressure_index"], [0, 1.5, 2.0, float("inf")], right=False,
+                         labels=["normal", "elevated", "extreme"])
+    df["date"] = df["date"].dt.date
+    return df[["date", "day_of_week", "station", "entries", "exits", "total", "usual",
+               "pressure_index", "extra_passengers", "level"]].sort_values(["date", "station"])
+
+
+def part4_busiest(daily: pd.DataFrame) -> pd.DataFrame:
+    index = daily.pivot_table(index=["date", "day_of_week"], columns="station", values="pressure_index")
+    extra = daily.pivot_table(index=["date", "day_of_week"], columns="station", values="extra_passengers")
+    out = pd.DataFrame(index=index.index)
+    out["busiest_nearby"] = index[NEARBY].idxmax(axis=1)
+    out["busiest_nearby_index"] = index[NEARBY].max(axis=1)
+    out["busiest_nearby_extra"] = [extra.loc[i, s] for i, s in out["busiest_nearby"].items()]
+    out["stratford_index"] = index["Stratford"]
+    out["stratford_extra"] = extra["Stratford"]
+    for station in NEARBY:
+        out[f"{station}_index"] = index[station]
+    out = out.reset_index().sort_values("busiest_nearby_index", ascending=False).head(15)
+    out["busiest_nearby_extra"] = out["busiest_nearby_extra"].round().astype("Int64")
+    out["stratford_extra"] = out["stratford_extra"].round().astype("Int64")
+    return out
+
+
 def main() -> None:
+    daily = part4_daily()
     for name, build in [("part1_stratford_growth.csv", part1),
-                        ("part2_station_demand.csv", part2),
-                        ("part3_train_crowding.csv", part3)]:
+                        ("part2_station_trends.csv", part2),
+                        ("part3_train_crowding.csv", part3),
+                        ("part4_daily_pressure.csv", lambda: daily),
+                        ("part4_busiest_days.csv", lambda: part4_busiest(daily))]:
         table = build()
         table.to_csv(DATA / name, index=False)
         print(f"{name}: {len(table)} rows")

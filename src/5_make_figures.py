@@ -1,13 +1,15 @@
-"""Step 4: draw the figures.
+"""Step 5: draw the figures.
 
-Reads the part tables from step 3 and saves PNG figures to figures/
+Reads the part tables from step 4 and saves PNG figures to figures/
 (figures are small and are committed to Git):
 
     part1_stratford_growth.png
+    part2_station_trends.png
     part3_train_crowding.png
+    part4_busiest_days.png
 
 Run from the repository root:
-    python src/4_make_figures.py
+    python src/5_make_figures.py
 """
 
 from pathlib import Path
@@ -16,6 +18,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "processed"
@@ -24,6 +27,9 @@ FIGURES = ROOT / "figures"
 # Categorical colours, fixed order (validated default palette).
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 TEXT, MUTED, GRID = "#0b0b0b", "#52514e", "#e4e3df"
+RED, NEUTRAL = "#e34948", "#f0efec"  # diverging pair: blue = lower, red = higher
+STATIONS = ["Stratford", "Stratford International", "Stratford High Street",
+            "Pudding Mill Lane", "Hackney Wick"]
 
 SOURCE_TFL = "Powered by TfL Open Data."
 
@@ -119,10 +125,94 @@ def part3() -> None:
     plt.close(fig)
 
 
+def part2() -> None:
+    """Whole-day demand at the five study stations, each year compared with 2019."""
+    df = pd.read_csv(DATA / "part2_station_trends.csv")
+    df = df[df["time_band"] == "Whole day"]
+    panels = [("weekday", "Weekday"), ("saturday", "Saturday"), ("sunday", "Sunday")]
+    cmap = LinearSegmentedColormap.from_list("div", [BLUE, NEUTRAL, RED])
+    norm = TwoSlopeNorm(vmin=0, vcenter=1, vmax=2)
+
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.4), dpi=150, sharey=True)
+    for ax, (key, title) in zip(axes, panels):
+        grid = df[df["day_type"] == key].pivot(index="station", columns="year", values="vs_2019")
+        grid = grid.loc[STATIONS]
+        ax.imshow(grid.clip(upper=2).values, cmap=cmap, norm=norm, aspect="auto")
+        for i in range(grid.shape[0]):
+            for j in range(grid.shape[1]):
+                v = grid.iat[i, j]
+                ax.text(j, i, f"{v:.1f}", ha="center", va="center", fontsize=8,
+                        color="white" if v < 0.45 or v > 1.75 else TEXT)
+        ax.set_xticks(range(grid.shape[1]))
+        ax.set_xticklabels(grid.columns, fontsize=8, color=MUTED)
+        ax.set_yticks(range(grid.shape[0]))
+        ax.set_yticklabels(grid.index, fontsize=9, color=TEXT)
+        ax.set_title(title, loc="left", fontsize=10, color=TEXT)
+        ax.tick_params(length=0)
+        for side in ax.spines.values():
+            side.set_visible(False)
+    fig.suptitle("Since the pandemic, Stratford has stayed below its 2019 level; Hackney Wick and Pudding Mill Lane are well above theirs",
+                 x=0.01, ha="left", fontsize=12, color=TEXT)
+    fig.text(0.01, 0.01,
+             "Each cell: whole-day entries + exits on a typical day ÷ the same station in 2019 (1.0 = same as 2019; "
+             "red = busier, blue = quieter; colours capped at 2.0). 2020–21: pandemic.\n"
+             "Weekday = Mon–Thu up to 2021, Tue–Thu from 2022. Stratford's 2025 Saturday total equals 2024's, "
+             "suggesting TfL reused the count. Source: NUMBAT 2018–2025. " + SOURCE_TFL,
+             fontsize=7, color=MUTED)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.97))
+    fig.savefig(FIGURES / "part2_station_trends.png")
+    plt.close(fig)
+
+
+def part4() -> None:
+    """On the busiest days for nearby stations, how busy was Stratford?"""
+    df = pd.read_csv(DATA / "part4_busiest_days.csv", parse_dates=["date"])
+    df = df.sort_values("busiest_nearby_index", ascending=True).reset_index(drop=True)
+    fig, ax = plt.subplots(figsize=(10, 6.4), dpi=150)
+    style_axes(ax)
+    ax.yaxis.grid(False)
+    ax.xaxis.grid(True, color=GRID, linewidth=0.8)
+
+    y = range(len(df))
+    for i, row in df.iterrows():
+        ax.plot([row["stratford_index"], row["busiest_nearby_index"]], [i, i], color=GRID, linewidth=2, zorder=1)
+    ax.scatter(df["stratford_index"], y, s=60, color=BLUE, zorder=3, label="Stratford",
+               edgecolor="white", linewidth=1.5)
+    ax.scatter(df["busiest_nearby_index"], y, s=60, color=ORANGE, zorder=3,
+               label="Busiest nearby station that day", edgecolor="white", linewidth=1.5)
+    for i, row in df.iterrows():
+        ax.text(row["busiest_nearby_index"] + 0.08, i, row["busiest_nearby"], va="center",
+                fontsize=8, color=MUTED)
+
+    labels = [f"{d:%a %d %b}" for d in df["date"]]
+    ax.set_yticks(list(y))
+    ax.set_yticklabels(labels, fontsize=9, color=TEXT)
+    for x, text in [(1, "usual"), (1.5, "1.5×"), (2, "2×")]:
+        ax.axvline(x, color=MUTED, linewidth=0.8, linestyle=(0, (3, 3)), zorder=0)
+        ax.text(x, len(df) - 0.3, text, ha="center", fontsize=8, color=MUTED)
+    ax.set_xlim(0.8, 6.6)
+    ax.set_ylim(-0.7, len(df) + 0.2)
+    ax.set_xlabel("Entries + exits that day ÷ the station's usual level for that day of the week",
+                  color=MUTED, fontsize=9)
+    ax.legend(frameon=False, fontsize=9, loc="lower right")
+    ax.set_title("On the 15 busiest days for nearby stations in 2025, Stratford rose far less (1.0–1.5× its usual level)",
+                 loc="left", fontsize=12, color=TEXT, pad=12)
+    fig.text(0.01, 0.01,
+             "Usual = median for the same station and day of the week in 2025. Days a station had no taps are left out. "
+             "Small stations swing more in relative terms;\nin absolute numbers Stratford often gains more people "
+             "(see part4_busiest_days.csv). Source: TfL station footfall. " + SOURCE_TFL,
+             fontsize=7, color=MUTED)
+    fig.tight_layout(rect=(0, 0.05, 1, 1))
+    fig.savefig(FIGURES / "part4_busiest_days.png")
+    plt.close(fig)
+
+
 def main() -> None:
     FIGURES.mkdir(exist_ok=True)
     part1()
+    part2()
     part3()
+    part4()
     print(f"Figures saved to {FIGURES}")
 
 
