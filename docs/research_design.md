@@ -98,7 +98,7 @@ The analysis is organised as a four-part story. Each part answers one question w
 | Part | Question | Data | Main figure | Hypothesis |
 |---|---|---|---|---|
 | 1. Concentration | Why Stratford? How did use grow? | LU station entry/exit counts 2007–2017 (Stratford only) | Line chart by day type, annotated with the timeline in 4.1 | H1 |
-| 2. Everyday pressure | Is pressure rising across the five stations? | NUMBAT typical-day outputs 2018–2025 (2016–2017 if comparable) | Heatmap: station × year, one panel each for weekday, Saturday and Sunday | H1, H2 |
+| 2. Everyday pressure | Is pressure rising across the five stations? | NUMBAT typical-day outputs 2018–2025 | Heatmap: station × year, one panel each for weekday, Saturday and Sunday | H1, H2 |
 | 3. Travel experience | What does that pressure feel like on board? | NUMBAT 2025 link loads and frequencies; TfL rolling stock data; crowding valuation (Yap, Wong & Cats, 2023) | Peak vs off-peak perceived journey time by line | H2 |
 | 4. Redistribution | On event days, where does the pressure go? | TfL Network Demand station footfall (daily); event calendar | Daily demand relative to each station's median, event days marked | H3, H4 |
 
@@ -137,10 +137,14 @@ The project aims to evaluate how far the evidence at Stratford supports the conc
 
 ## 8. Open Decisions
 
-- Confirm that all five study stations appear in NUMBAT 2018–2025 and in the station footfall files.
-- Decide whether NUMBAT 2016–2017 can be compared with later years (day-type definitions changed).
-- Choose the fixed time period for the heatmap in Part 2 (e.g. AM peak or daily total).
-- Build and verify the event calendar (date, venue, event type, attendance).
+Done (22 November 2026):
+- All five study stations appear in NUMBAT 2018–2025 and in the station footfall files.
+- The Part 2 heatmap uses whole-day totals, compared with 2019. Tables by time band are also available.
+- NUMBAT 2016–2017 are not used: 2018–2025 already cover the period before and after the pandemic.
+
+Still open:
+- Build and verify the event calendar (date, venue, event type, attendance), so the busiest days in Part 4 can be matched to events.
+- Find out why Pudding Mill Lane demand jumps from 2022 in NUMBAT (real change, or a change in how TfL models the station?).
 - Verify the Elizabeth line standing area, currently estimated from published standing capacity.
 
 ## 9. Revision History
@@ -152,7 +156,7 @@ Substantive changes are also recorded in the Git history.
 | 0.1 | 2026-11-02 | Initial draft |
 | 0.1 (GitHub) | 2026-11-16 | Added to the repository |
 | 0.2 | 2026-11-17 | Added candidate case: Camden High Street pedestrianisation |
-| 0.3 | 2026-11-22 | Stratford selected as main case; Camden set aside; analysis organised as a four-part story; pressure index and perceived time defined |
+| 0.3 | 2026-11-22 | Stratford selected as main case; Camden set aside; analysis organised as a four-part story; pressure index and perceived time defined; first results for all four parts |
 
 ---
 

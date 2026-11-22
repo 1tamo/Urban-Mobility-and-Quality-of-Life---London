@@ -4,18 +4,18 @@ This page explains which data we use, where they come from, how they are process
 
 ## 1. Datasets
 
-| Dataset | What it tells us | Used in | Status |
-|---|---|---|---|
-| Underground station entry/exit counts, 2007–2017 | How many people pass through each Underground station's gates on a typical weekday, Saturday and Sunday, each year | Part 1 | In use |
-| NUMBAT 2025 | TfL's model of a typical 2025 day: people entering and leaving every station, and passengers and trains on every stretch of track, in 15-minute steps | Parts 2 and 3 | In use |
-| NUMBAT 2018–2024 | The same for earlier years | Part 2 | To download |
-| TfL station footfall | Entries and exits per station on real dates, including event days | Part 4 | To download |
+| Dataset | What it tells us | Used in |
+|---|---|---|
+| Underground station entry/exit counts, 2007–2017 | How many people pass through each Underground station's gates on a typical weekday, Saturday and Sunday, each year | Part 1 |
+| NUMBAT 2018–2025 | TfL's model of a typical day each year: people entering and leaving every station in 15-minute steps; for 2025 also passengers and trains on every stretch of track | Parts 2 and 3 |
+| TfL station footfall | Entries and exits per station on every real date, including event days | Part 4 |
 
 ### What each dataset cannot show
 
-- **NUMBAT describes a typical day, not real dates.** TfL leaves out days with disruption, events or closures, and assumes every train runs on time. It cannot show what happens on a match day; Part 4 needs the station footfall data for that.
-- **NUMBAT values are modelled estimates**, which is why they have decimals. The 2007–2017 figures are gate counts. The two cannot be joined into one trend line.
+- **NUMBAT describes a typical day, not real dates.** TfL leaves out days with disruption, events or closures. It cannot show what happens on a match day; Part 4 uses station footfall for that.
+- **NUMBAT values are modelled estimates**, which is why they have decimals. The 2007–2017 figures are gate counts and station footfall is card taps. The three cannot be joined into one trend line.
 - **The 2007–2017 counts cover Underground gates only**, not the DLR, Overground or Elizabeth line.
+- **Station footfall counts taps.** At DLR stations without ticket gates, some passengers do not tap, so footfall can be lower than real use.
 
 ## 2. Sources and licences
 
@@ -28,38 +28,54 @@ This page explains which data we use, where they come from, how they are process
 - **Attribution:** "Contains public sector information licensed under the Open Government Licence v2.0."
 - **Downloaded:** 16 November 2026
 
-### NUMBAT 2025
+### NUMBAT 2018–2025
 
 - **Publisher:** Transport for London
-- **Folder:** <https://crowding.data.tfl.gov.uk/#!NUMBAT%2FNUMBAT%202025%2F>
-- **Files:** `NBT25MON_Outputs.xlsx`, `NBT25TWT_Outputs.xlsx`, `NBT25FRI_Outputs.xlsx`, `NBT25SAT_Outputs.xlsx`, `NBT25SUN_Outputs.xlsx`
+- **Location:** <https://crowding.data.tfl.gov.uk/>, folder `NUMBAT`, one subfolder per year
+- **Files used:** for each year, the weekday, Saturday and Sunday files, e.g. `NBT25TWT_Outputs.xlsx`, `NBT25SAT_Outputs.xlsx`, `NBT25SUN_Outputs.xlsx`. The weekday file is `MTT` (Monday–Thursday) up to 2021 and `TWT` (Tuesday–Thursday) from 2022.
 - **Licence:** TfL Transport Data Service terms (<https://tfl.gov.uk/corporate/terms-and-conditions/transport-data-service>), based on the Open Government Licence v2.0 with TfL amendments. Use requires registering with TfL's open data service (done 17 November 2026) and must not suggest TfL endorsement.
 - **Attribution:** "Powered by TfL Open Data."
-- **Downloaded:** 16 November 2026
+- **Downloaded:** 2025 on 16 November 2026; 2018–2024 on 22 November 2026
 
-Earlier NUMBAT years are in the same folder structure and under the same licence.
+### TfL station footfall
+
+- **Publisher:** Transport for London
+- **Page:** <https://tfl.gov.uk/corporate/publications-and-reports/network-demand-data> ("Station footfall documents")
+- **Files:** `StationFootfall_2023.csv`, `StationFootfall_2025_2026 .csv` (the second file name contains a space before `.csv`, as downloaded)
+- **Coverage:** every day, 1 January–31 December 2023 and 1 January 2025–14 November 2026. 2024 is not covered by these files.
+- **Licence:** published by TfL as open data; treated as covered by the same TfL Transport Data Service terms as NUMBAT. The page asks users to read TfL's Data Guide before use.
+- **Attribution:** "Powered by TfL Open Data."
+- **Downloaded:** 22 November 2026
+
+### Event calendar (our own data)
+
+- **File:** `data/events_calendar.csv`, kept in the repository because we make it ourselves.
+- **Columns:** `date`, `venue`, `event_type`, `event_name`, `attendance`, `source_url`.
+- **Status:** started. It is used to explain the busiest days in Part 4.
 
 ### Raw files are not in this repository
 
-Raw files are kept out of the repository because of their size (about 64 MB). Download them from the links above into `data/raw/`, keeping the original file names.
+Raw files are kept out of the repository because of their size. Download them from the links above into `data/raw/`, keeping the original file names.
 
 ## 3. Processing
 
-Four scripts, run in order from the repository root:
+Five scripts, run in order from the repository root:
 
 ```
 python src/1_clean_numbat.py
 python src/2_clean_entry_exit.py
-python src/3_make_tables.py
-python src/4_make_figures.py
+python src/3_clean_footfall.py
+python src/4_make_tables.py
+python src/5_make_figures.py
 ```
 
 | Step | Script | Reads | Writes |
 |---|---|---|---|
-| 1 | `1_clean_numbat.py` | 5 NUMBAT 2025 files | `numbat_stations.csv`, `numbat_links.csv` |
+| 1 | `1_clean_numbat.py` | NUMBAT 2018–2025 files | `numbat_stations.csv`, `numbat_links.csv` |
 | 2 | `2_clean_entry_exit.py` | 2007–2017 entry/exit file | `entry_exit_2007_2017.csv` |
-| 3 | `3_make_tables.py` | the three files above | `part1_stratford_growth.csv`, `part2_station_demand.csv`, `part3_train_crowding.csv` |
-| 4 | `4_make_figures.py` | the part tables | `figures/part1_stratford_growth.png`, `figures/part3_train_crowding.png` |
+| 3 | `3_clean_footfall.py` | station footfall files | `footfall_daily.csv` |
+| 4 | `4_make_tables.py` | the four files above | one table per part (`part1_…` to `part4_…`) |
+| 5 | `5_make_figures.py` | the part tables | four figures in `figures/` |
 
 All tables are written to `data/processed/`, which is not in the repository. Raw files are never changed.
 
@@ -74,42 +90,49 @@ All tables are written to `data/processed/`, which is not in the repository. Raw
 - The original file has one sheet per year, with title rows above and formatting rows below the table. The script keeps only the station rows and stacks the years into one table.
 - It translates the letter notes in the file into words, e.g. `A` = "estimated from previous year". Stratford has no notes in any year.
 
-### Checks worth knowing about
+**Station footfall (step 3)**
+- Joins the files into one table and turns dates such as `20250518` into `2025-05-18`.
 
-- **Both datasets passed basic checks:** no blank cells, no negative values, no duplicated stations, and totals add up.
-- **Passengers per train are calculated per hour, not per 15 minutes.** Each train is counted in only one 15-minute slot, so the number of trains per slot jumps (e.g. 4, 2, 4, 2) while passenger numbers change smoothly. Per 15 minutes, some Elizabeth line trains would appear to carry over 1,700 people, more than a train holds. Per hour, the highest value next to Stratford is 1,299, below the capacity of about 1,500.
+### Things to know when reading the results
+
+- **Passengers per train are calculated per hour, not per 15 minutes.** Each train is counted in only one 15-minute slot, so the number of trains per slot jumps (e.g. 4, 2, 4, 2) while passenger numbers change smoothly. Per hour, the highest value next to Stratford is 1,299 per train, below the capacity of about 1,500.
 - **The Elizabeth line standing area is an estimate.** TfL publishes 1,043 standing places per train but not the floor area; we assume about 4 people per m², giving about 261 m².
+- **The NUMBAT weekday changed definition in 2022**, from Monday–Thursday to Tuesday–Thursday.
+- **Stratford's 2025 Saturday total in NUMBAT equals its 2024 total** to within one passenger, although the 15-minute values differ. TfL probably reused the 2024 count, so the 2024–2025 Saturday change at Stratford should not be read as real.
+- **Pudding Mill Lane jumps in NUMBAT from 2022** (2–3× on weekdays and 6–8× at weekends compared with 2019). The cause is not yet known; it may be real growth around the station or a change in how TfL models it. Treat it with caution until checked.
+- **Days with no taps** at a station in the footfall data mean the station was closed or data are missing. They are left out of Part 4. A few days have very low counts (shown as about 0× usual), which suggests the station was closed for most of the day.
+- **Small stations swing more.** Stratford High Street usually has under 2,000 entries + exits a day, so a few hundred extra people double it. Part 4 therefore reports extra passengers as well as the ratio.
 
 ## 4. Tables
 
-### Cleaned tables (steps 1 and 2)
+### Cleaned tables (steps 1–3)
 
-These are large and are only used as inputs to step 3.
+These are large and are only used as inputs to step 4.
 
-**`numbat_stations.csv`** — one row = one station, one day type, one 15-minute slot (207,360 rows)
+**`numbat_stations.csv`** — one row = one station, one year, one day type, one 15-minute slot
 
 | Column | Meaning |
 |---|---|
-| `day_type` | `monday`, `tue_thu` (Tuesday to Thursday), `friday`, `saturday`, `sunday` |
+| `year` | 2018–2025 |
+| `day_type` | `weekday`, `saturday`, `sunday` |
 | `nlc` | TfL station number (e.g. Stratford = 719). Use it to match stations, because names vary between files. |
 | `station` | Station name |
 | `time` | Start of the 15-minute slot, e.g. `08:15`. NUMBAT's day runs from 05:00 to 04:59. |
 | `time_band` | `Early` 05–07, `AM Peak` 07–10, `Midday` 10–16, `PM Peak` 16–19, `Evening` 19–22, `Late` 22–05 |
 | `entries` / `exits` | People entering / leaving the station in that slot (modelled) |
 
-**`numbat_links.csv`** — one row = one stretch of track between two neighbouring stations, in one direction, one day type, one 15-minute slot (548,640 rows)
+**`numbat_links.csv`** — one row = one stretch of track between two neighbouring stations, in one direction, typical 2025 weekday, one 15-minute slot
 
 | Column | Meaning |
 |---|---|
-| `day_type`, `time`, `time_band` | As above |
 | `line` | Line name |
 | `link` | TfL's code for the stretch of track |
 | `from_station` / `to_station` | The two stations it connects |
 | `direction` | TfL's direction code (e.g. `EB` eastbound, `WB` westbound) |
-| `passengers` | Passengers travelling along it in that slot |
-| `trains` | Trains running along it in that slot |
+| `time`, `time_band` | As above |
+| `passengers` / `trains` | Passengers / trains on it in that slot |
 
-**`entry_exit_2007_2017.csv`** — one row = one Underground station, one year, one day type (8,859 rows)
+**`entry_exit_2007_2017.csv`** — one row = one Underground station, one year, one day type
 
 | Column | Meaning |
 |---|---|
@@ -119,28 +142,37 @@ These are large and are only used as inputs to step 3.
 | `entries` / `exits` | People entering / leaving through the gates on a typical day (counted) |
 | `note` | Publisher's note, in words (blank if none) |
 
-### Part tables (step 3)
+**`footfall_daily.csv`** — one row = one station on one real date
+
+| Column | Meaning |
+|---|---|
+| `date` | e.g. `2025-05-18` |
+| `day_of_week` | e.g. `Sunday` |
+| `station` | Station name |
+| `entries` / `exits` | Card taps in / out that day |
+
+### Part tables (step 4)
 
 Small tables, one per part of the story. These are the tables to share with the team and to use for figures.
 
-**`part1_stratford_growth.csv`** — Stratford Underground station, typical day, 2007–2017 (33 rows)
+**`part1_stratford_growth.csv`** — Stratford Underground station, typical day, 2007–2017
 
 | Column | Meaning |
 |---|---|
 | `year`, `day_type` | As above |
 | `entries`, `exits`, `total` | People entering, leaving, and both together |
 
-**`part2_station_demand.csv`** — the five study stations, typical day, by time band (2025 only for now; 105 rows)
+**`part2_station_trends.csv`** — the five study stations, typical day, 2018–2025
 
 | Column | Meaning |
 |---|---|
-| `year` | 2025 (earlier years to be added) |
-| `day_type` | `tue_thu`, `saturday`, `sunday` |
+| `year`, `day_type` | As above |
 | `station` | Stratford, Stratford International, Stratford High Street, Pudding Mill Lane, Hackney Wick |
 | `time_band` | As above, plus `Whole day` |
 | `entries`, `exits`, `total` | People entering, leaving, and both together |
+| `vs_2019` | `total` ÷ the same station, day type and time band in 2019. 1.0 = same as 2019. |
 
-**`part3_train_crowding.csv`** — trains next to Stratford, typical 2025 Tuesday–Thursday, by hour (119 rows)
+**`part3_train_crowding.csv`** — trains next to Stratford, typical 2025 weekday, by hour
 
 | Column | Meaning |
 |---|---|
@@ -153,6 +185,27 @@ Small tables, one per part of the story. These are the tables to share with the 
 | `seats` | Seats per train |
 | `standing_per_m2` | People standing per m² of floor; 0 means everyone can sit |
 | `ten_minutes_feels_like` | How long a 10-minute ride feels at that crowding: 10 × (1 + 0.42 × `standing_per_m2`), from Yap, Wong & Cats (2023). Not extra clock time. |
+
+**`part4_daily_pressure.csv`** — the five study stations on every day of 2025
+
+| Column | Meaning |
+|---|---|
+| `date`, `day_of_week`, `station`, `entries`, `exits` | As in `footfall_daily.csv` |
+| `total` | `entries` + `exits` |
+| `usual` | The station's median `total` on the same day of the week in 2025 |
+| `pressure_index` | `total` ÷ `usual`. 2.0 = twice the usual number of people. |
+| `extra_passengers` | `total` − `usual` |
+| `level` | `normal` (below 1.5), `elevated` (1.5 to 2), `extreme` (2 or more). These thresholds are our choice, not safety limits. |
+
+**`part4_busiest_days.csv`** — the 15 days of 2025 when a nearby station was busiest compared with usual
+
+| Column | Meaning |
+|---|---|
+| `date`, `day_of_week` | The day |
+| `busiest_nearby` | The nearby station with the highest pressure index that day |
+| `busiest_nearby_index` / `busiest_nearby_extra` | Its pressure index / extra passengers |
+| `stratford_index` / `stratford_extra` | Stratford's pressure index / extra passengers on the same day |
+| `<station>_index` | Pressure index of each nearby station that day (blank if no data) |
 
 ## 5. Attribution for anything we publish
 
