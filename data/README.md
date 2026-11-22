@@ -4,24 +4,28 @@ Data files are not stored in the repository. Each team member keeps a local copy
 
 ```
 data/
-├── raw/         original downloads, never edited
-└── processed/   tables made by the scripts in src/
+├── raw/                 original downloads, never edited (not in the repository)
+├── processed/           tables made by the scripts in src/ (not in the repository)
+└── events_calendar.csv  events near the Park, compiled by the team (in the repository)
 ```
 
 ## Getting started
 
 1. Download the raw files listed in [`docs/data.md`](../docs/data.md) (section 2) into `data/raw/`. Keep the original file names, and do not open and save them in Excel (this can change dates and number formats).
-2. Activate the virtual environment and install the packages:
+2. Create a virtual environment **outside any iCloud-synced folder** (first time only), activate it and install the packages:
    ```
-   source .venv/bin/activate
+   python3 -m venv ~/venvs/urban-mobility
+   source ~/venvs/urban-mobility/bin/activate
    python -m pip install -r requirements.txt
    ```
-3. Run the four scripts in order from the repository root:
+   Next time, only the `source` line is needed.
+3. Run the five scripts in order from the repository root:
    ```
    python src/1_clean_numbat.py
    python src/2_clean_entry_exit.py
-   python src/3_make_tables.py
-   python src/4_make_figures.py
+   python src/3_clean_footfall.py
+   python src/4_make_tables.py
+   python src/5_make_figures.py
    ```
 
 ## Adding a new dataset
