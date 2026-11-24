@@ -41,7 +41,7 @@ On a typical day in 2025, Stratford is still below its 2019 level (about 0.7–0
 
 ### Part 3: Travel experience
 
-On a typical 2025 weekday between 08:00 and 09:00, trains leaving Stratford for central London run with all seats taken. Using a recent London crowding valuation (Yap, Wong & Cats 2023), a 10-minute ride feels like about 16 minutes on the Central line and about 24 minutes on the Elizabeth line, against 10–11.5 minutes off-peak. With the average of earlier studies, the figures are about 13 and 17 minutes. The Jubilee line starts at Stratford and has seats available on average.
+On a typical 2025 weekday between 08:00 and 09:00, Central line and Elizabeth line trains leaving Stratford for central London run with all seats taken. Using a recent London crowding valuation (Yap, Wong & Cats 2023), a 10-minute ride feels like about 16 minutes on the Central line and about 24 minutes on the Elizabeth line, against 10–11.5 minutes off-peak. With the average of earlier studies, the figures are about 13 and 17 minutes. The Jubilee line starts at Stratford and has seats available on average.
 
 ![How long a 10-minute ride leaving Stratford feels, 2025](figures/part3_train_crowding.png)
 
