@@ -47,6 +47,16 @@ This page explains which data we use, where they come from, how they are process
 - **Attribution:** "Powered by TfL Open Data."
 - **Downloaded:** 22 November 2026
 
+### Station locations (our own reference data)
+
+- **File:** `data/station_locations.csv`, kept in the repository.
+- **Content:** latitude and longitude of the five study stations, copied from each station's Wikipedia page (link in the file), checked 25 November 2026.
+
+### Background map
+
+- **Source:** OpenStreetMap map tiles (<https://tile.openstreetmap.org>), downloaded by step 6 on its first run and kept in `data/processed/tiles/`.
+- **Licence:** map data © OpenStreetMap contributors, Open Database Licence (ODbL). The attribution is printed on every map. We download only the 24 tiles needed, once, as allowed by the OpenStreetMap tile usage policy.
+
 ### Event calendar (our own data)
 
 - **File:** `data/events_calendar.csv`, kept in the repository because we make it ourselves.
@@ -59,7 +69,7 @@ Raw files are kept out of the repository because of their size. Download them fr
 
 ## 3. Processing
 
-Five scripts, run in order from the repository root:
+Six scripts, run in order from the repository root:
 
 ```
 python src/1_clean_numbat.py
@@ -67,6 +77,7 @@ python src/2_clean_entry_exit.py
 python src/3_clean_footfall.py
 python src/4_make_tables.py
 python src/5_make_figures.py
+python src/6_make_map.py
 ```
 
 | Step | Script | Reads | Writes |
@@ -76,6 +87,7 @@ python src/5_make_figures.py
 | 3 | `3_clean_footfall.py` | station footfall files | `footfall_daily.csv` |
 | 4 | `4_make_tables.py` | the four files above | one table per part (`part0_…` to `part4_…`) |
 | 5 | `5_make_figures.py` | the part tables | six figures in `figures/` |
+| 6 | `6_make_map.py` | `part2_station_trends.csv`, `station_locations.csv`, OpenStreetMap tiles | `figures/part2_map.gif`, `figures/part2_map_2025.png`, `docs/part2_map.html` |
 
 All tables are written to `data/processed/`, which is not in the repository. Raw files are never changed.
 
@@ -240,3 +252,4 @@ Small tables, one per part of the story. These are the tables to share with the 
 
 - Powered by TfL Open Data.
 - Contains public sector information licensed under the Open Government Licence v2.0.
+- Maps: Map data © OpenStreetMap contributors.

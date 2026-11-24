@@ -39,9 +39,13 @@ On a typical day in 2025, Stratford is still below its 2019 level (about 0.7–0
 
 ![Typical-day demand at five stations compared with 2019](figures/part2_station_trends.png)
 
+The same data on a map, year by year (circle colour = compared with 2019, circle size = number of people). An interactive version, where you can choose the year and day type, is in [`docs/part2_map.html`](docs/part2_map.html) (download it and open it in a browser).
+
+![Animated map of the five stations, 2018–2025](figures/part2_map.gif)
+
 ### Part 3: Travel experience
 
-On a typical 2025 weekday between 08:00 and 09:00, trains leaving Stratford for central London run with all seats taken. Using the latest London crowding valuation (Yap, Wong & Cats 2023), a 10-minute ride feels like about 16 minutes on the Central line and about 24 minutes on the Elizabeth line, against 10–11.5 minutes off-peak. With the average of earlier studies, the figures are about 13 and 17 minutes. The Jubilee line starts at Stratford and has seats available on average.
+On a typical 2025 weekday between 08:00 and 09:00, Central line and Elizabeth line trains leaving Stratford for central London run with all seats taken. Using a recent London crowding valuation (Yap, Wong & Cats 2023), a 10-minute ride feels like about 16 minutes on the Central line and about 24 minutes on the Elizabeth line, against 10–11.5 minutes off-peak. With the average of earlier studies, the figures are about 13 and 17 minutes. The Jubilee line starts at Stratford and has seats available on average.
 
 ![How long a 10-minute ride leaving Stratford feels, 2025](figures/part3_train_crowding.png)
 
@@ -65,7 +69,7 @@ On the 15 days of 2025 when a nearby station was busiest compared with usual, th
 | [`docs/research_design.md`](docs/research_design.md) | Research question, case selection, methods and limitations |
 | [`docs/data.md`](docs/data.md) | Data sources and licences, how the data are processed, and what each table contains |
 | [`data/README.md`](data/README.md) | How to get the data and run the scripts |
-| `src/` | Five scripts, run in order: `1_clean_numbat.py`, `2_clean_entry_exit.py`, `3_clean_footfall.py`, `4_make_tables.py`, `5_make_figures.py` |
+| `src/` | Six scripts, run in order: `1_clean_numbat.py`, `2_clean_entry_exit.py`, `3_clean_footfall.py`, `4_make_tables.py`, `5_make_figures.py`, `6_make_map.py` |
 | `data/events_calendar.csv` | Events near the Park, compiled by the team |
 | `figures/` | Figures used in this README and the presentation |
 

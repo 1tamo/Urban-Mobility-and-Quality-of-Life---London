@@ -6,7 +6,8 @@ Data files are not stored in the repository. Each team member keeps a local copy
 data/
 ├── raw/                 original downloads, never edited (not in the repository)
 ├── processed/           tables made by the scripts in src/ (not in the repository)
-└── events_calendar.csv  events near the Park, compiled by the team (in the repository)
+├── events_calendar.csv  events near the Park, compiled by the team (in the repository)
+└── station_locations.csv  coordinates of the five study stations (in the repository)
 ```
 
 ## Getting started
@@ -19,14 +20,16 @@ data/
    python -m pip install -r requirements.txt
    ```
    Next time, only the `source` line is needed.
-3. Run the five scripts in order from the repository root:
+3. Run the six scripts in order from the repository root:
    ```
    python src/1_clean_numbat.py
    python src/2_clean_entry_exit.py
    python src/3_clean_footfall.py
    python src/4_make_tables.py
    python src/5_make_figures.py
+   python src/6_make_map.py
    ```
+   Step 6 needs internet the first time, to download the background map.
 
 ## Adding a new dataset
 
